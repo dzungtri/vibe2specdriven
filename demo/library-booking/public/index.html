@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Đặt phòng tự học · Thư viện</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Lora:wght@600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f7f3ec;
+    --paper: #fffdf9;
+    --ink: #2a2622;
+    --muted: #7a7168;
+    --line: #e8e0d4;
+    --brand: #1f4d3f;
+    --brand-2: #2f6b57;
+    --accent: #d9a441;
+    --free: #eef6f1;
+    --free-hover: #d4ecdf;
+    --busy: #f3e9e6;
+    --past: #f1eee9;
+    --danger: #b4483a;
+    --radius: 16px;
+    --shadow: 0 1px 2px rgba(42,38,34,.04), 0 8px 24px rgba(42,38,34,.06);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--ink); -webkit-font-smoothing: antialiased;
+  }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+
+  /* ---------- header ---------- */
+  header {
+    background: radial-gradient(1200px 300px at 80% -50%, #3d7d66 0%, transparent 60%), var(--brand);
+    color: #fff; padding: 28px 24px 84px;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-mark { width: 44px; height: 44px; border-radius: 12px; background: var(--accent); display: grid; place-items: center; font-size: 22px; box-shadow: inset 0 -3px 0 rgba(0,0,0,.12); }
+  .logo h1 { font-family: 'Lora', serif; font-size: 22px; margin: 0; letter-spacing: .2px; }
+  .logo p { margin: 2px 0 0; font-size: 13px; opacity: .75; }
+  .tabs { display: flex; gap: 4px; background: rgba(255,255,255,.1); padding: 4px; border-radius: 999px; }
+  .tabs button { border: 0; background: transparent; color: #fff; padding: 8px 18px; border-radius: 999px; font-weight: 500; font-size: 14px; opacity: .8; }
+  .tabs button.active { background: #fff; color: var(--brand); opacity: 1; }
+  .hero { margin-top: 28px; display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
+  .hero h2 { font-family: 'Lora', serif; font-size: 32px; margin: 0; font-weight: 700; }
+  .hero .sub { opacity: .8; margin-top: 6px; font-size: 15px; }
+  .clock { text-align: right; }
+  .clock .t { font-size: 30px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .clock .d { font-size: 13px; opacity: .75; }
+
+  main { margin-top: -56px; padding: 0 24px 60px; }
+
+  /* ---------- room cards ---------- */
+  .rooms { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+  .room {
+    background: var(--paper); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow);
+    border-top: 4px solid var(--c); display: flex; flex-direction: column; gap: 8px; min-height: 150px;
+    transition: transform .15s ease;
+  }
+  .room:hover { transform: translateY(-2px); }
+  .room .name { font-weight: 700; font-size: 15px; }
+  .room .meta { font-size: 12px; color: var(--muted); }
+  .room .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .tag { font-size: 11px; background: var(--bg); padding: 2px 8px; border-radius: 999px; color: var(--muted); }
+  .status { margin-top: auto; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #3aa76d; box-shadow: 0 0 0 3px rgba(58,167,109,.18); }
+  .status.busy .dot { background: var(--danger); box-shadow: 0 0 0 3px rgba(180,72,58,.18); }
+  .status.closed .dot { background: #aaa; box-shadow: none; }
+
+  /* ---------- schedule ---------- */
+  .card { background: var(--paper); border-radius: var(--radius); box-shadow: var(--shadow); margin-top: 22px; }
+  .card-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 20px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .card-head h3 { margin: 0; font-size: 17px; }
+  .days { display: flex; gap: 6px; overflow-x: auto; }
+  .day { border: 1px solid var(--line); background: #fff; border-radius: 12px; padding: 6px 12px; text-align: center; min-width: 62px; }
+  .day small { display: block; font-size: 11px; color: var(--muted); }
+  .day b { font-size: 16px; }
+  .day.active { background: var(--brand); border-color: var(--brand); color: #fff; }
+  .day.active small { color: rgba(255,255,255,.75); }
+
+  .legend { display: flex; gap: 16px; font-size: 12px; color: var(--muted); padding: 12px 20px 0; flex-wrap: wrap; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
+
+  .grid-wrap { overflow-x: auto; padding: 12px 20px 20px; }
+  table.grid { border-collapse: separate; border-spacing: 4px; width: 100%; min-width: 900px; }
+  .grid th { font-size: 12px; font-weight: 500; color: var(--muted); padding: 4px; }
+  .grid th.room-h { text-align: left; width: 150px; font-size: 13px; color: var(--ink); font-weight: 600; white-space: nowrap; }
+  .grid th.room-h i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; background: var(--c); }
+  .grid td { height: 46px; border-radius: 8px; font-size: 11px; text-align: center; position: relative; }
+  .grid td.free { background: var(--free); cursor: pointer; transition: background .12s; }
+  .grid td.free:hover { background: var(--free-hover); }
+  .grid td.free:hover::after { content: '+ Đặt'; color: var(--brand); font-weight: 600; }
+  .grid td.busy { background: var(--c); color: #fff; font-weight: 600; opacity: .9; }
+  .grid td.past { background: var(--past); background-image: repeating-linear-gradient(45deg, transparent 0 6px, rgba(0,0,0,.03) 6px 12px); }
+  .grid td.now { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+  /* ---------- my bookings ---------- */
+  .mine { padding: 20px; }
+  .search { display: flex; gap: 10px; max-width: 520px; }
+  .search input { flex: 1; }
+  .list { margin-top: 18px; display: grid; gap: 10px; }
+  .item { display: flex; align-items: center; gap: 16px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; border-left: 4px solid var(--c); }
+  .item .when { font-weight: 600; }
+  .item .info { flex: 1; }
+  .item .info div:last-child { font-size: 13px; color: var(--muted); }
+  .empty { text-align: center; color: var(--muted); padding: 40px 0; }
+  .empty .big { font-size: 40px; }
+
+  /* ---------- forms ---------- */
+  input, select, textarea { width: 100%; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--line); background: #fff; outline: none; transition: border .12s, box-shadow .12s; }
+  input:focus, select:focus, textarea:focus { border-color: var(--brand-2); box-shadow: 0 0 0 3px rgba(47,107,87,.15); }
+  label { font-size: 13px; font-weight: 500; display: block; margin-bottom: 6px; }
+  .field { margin-bottom: 14px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .btn { border: 0; border-radius: 10px; padding: 11px 20px; font-weight: 600; background: var(--brand); color: #fff; transition: background .12s, transform .05s; }
+  .btn:hover { background: var(--brand-2); }
+  .btn:active { transform: translateY(1px); }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  .btn.ghost:hover { background: var(--bg); }
+  .btn.danger { background: transparent; color: var(--danger); border: 1px solid #ecd2cd; padding: 8px 14px; font-size: 13px; }
+  .btn.danger:hover { background: #fbefec; }
+  .btn:disabled { opacity: .6; cursor: not-allowed; }
+
+  /* ---------- modal ---------- */
+  .overlay { position: fixed; inset: 0; background: rgba(30,28,25,.45); backdrop-filter: blur(3px); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 50; }
+  .overlay.show { display: flex; animation: fade .15s ease; }
+  .modal { background: var(--paper); border-radius: 20px; width: 100%; max-width: 480px; box-shadow: 0 24px 60px rgba(0,0,0,.25); animation: pop .18s ease; overflow: hidden; }
+  .modal-head { padding: 20px 24px; background: var(--c, var(--brand)); color: #fff; }
+  .modal-head h3 { margin: 0; font-family: 'Lora', serif; font-size: 22px; }
+  .modal-head p { margin: 4px 0 0; opacity: .85; font-size: 14px; }
+  .modal-body { padding: 22px 24px; }
+  .modal-foot { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }
+  .durations { display: flex; gap: 8px; }
+  .durations button { flex: 1; border: 1px solid var(--line); background: #fff; border-radius: 10px; padding: 10px; font-weight: 500; }
+  .durations button.active { border-color: var(--brand); background: var(--free); color: var(--brand); font-weight: 700; }
+  .durations button:disabled { opacity: .4; cursor: not-allowed; }
+  .err { color: var(--danger); font-size: 13px; min-height: 18px; margin-bottom: 8px; }
+  .success { text-align: center; padding: 30px 24px; }
+  .success .check { width: 64px; height: 64px; border-radius: 50%; background: var(--free); color: var(--brand); display: grid; place-items: center; margin: 0 auto 14px; font-size: 32px; }
+  .code { font-family: ui-monospace, Menlo, monospace; font-size: 28px; letter-spacing: 4px; background: var(--bg); padding: 10px 18px; border-radius: 12px; display: inline-block; margin: 10px 0; font-weight: 700; }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: #fff; padding: 12px 20px; border-radius: 12px; font-size: 14px; opacity: 0; transition: all .25s; z-index: 60; pointer-events: none; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .rules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 22px; }
+  .rule { background: var(--paper); border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow); display: flex; gap: 12px; align-items: flex-start; font-size: 14px; }
+  .rule .ic { font-size: 22px; }
+  .rule b { display: block; margin-bottom: 2px; }
+  .rule span { color: var(--muted); font-size: 13px; }
+
+  @keyframes fade { from { opacity: 0 } }
+  @keyframes pop { from { transform: scale(.96); opacity: 0 } }
+  @media (max-width: 1000px) { .rooms { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 640px) {
+    .rooms { grid-template-columns: repeat(2, 1fr); } .rules { grid-template-columns: 1fr; }
+    .hero h2 { font-size: 24px; } .clock { display: none; } .row2 { grid-template-columns: 1fr; }
+  }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div class="logo">
+        <div class="logo-mark">📚</div>
+        <div><h1>Thư viện Trung tâm</h1><p>Hệ thống đặt phòng tự học</p></div>
+      </div>
+      <nav class="tabs">
+        <button class="active" data-view="schedule">Lịch phòng</button>
+        <button data-view="mine">Lịch của tôi</button>
+      </nav>
+    </div>
+    <div class="hero">
+      <div>
+        <h2 id="greeting">Tìm một góc yên tĩnh để học</h2>
+        <div class="sub" id="summary">Đang tải…</div>
+      </div>
+      <div class="clock"><div class="t" id="clock">--:--</div><div class="d" id="today"></div></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section class="rooms" id="rooms"></section>
+
+    <section id="view-schedule">
+      <div class="card">
+        <div class="card-head">
+          <h3>Lịch đặt phòng</h3>
+          <div class="days" id="days"></div>
+        </div>
+        <div class="legend">
+          <span><i style="background:var(--free)"></i>Còn trống — bấm để đặt</span>
+          <span><i style="background:#5b7fb8"></i>Đã có người đặt</span>
+          <span><i style="background:var(--past)"></i>Đã qua</span>
+          <span><i style="outline:2px solid var(--accent);outline-offset:-2px"></i>Giờ hiện tại</span>
+        </div>
+        <div class="grid-wrap"><table class="grid" id="grid"></table></div>
+      </div>
+      <div class="rules">
+        <div class="rule"><div class="ic">⏱️</div><div><b>Tối đa 3 giờ / ngày</b><span>Mỗi bạn được đặt tổng cộng 3 giờ mỗi ngày.</span></div></div>
+        <div class="rule"><div class="ic">📅</div><div><b>Đặt trước 7 ngày</b><span>Mở 7:00 – 21:00, mỗi khung 1 giờ.</span></div></div>
+        <div class="rule"><div class="ic">🤫</div><div><b>Giữ yên lặng</b><span>Nhận phòng đúng giờ, quá 15 phút lịch có thể bị huỷ.</span></div></div>
+      </div>
+    </section>
+
+    <section id="view-mine" class="hidden">
+      <div class="card mine">
+        <h3 style="margin:0 0 4px">Tra cứu lịch đã đặt</h3>
+        <p style="margin:0 0 16px;color:var(--muted);font-size:14px">Nhập mã thẻ thư viện / MSSV để xem và huỷ lịch.</p>
+        <form class="search" id="mine-form">
+          <input id="mine-id" placeholder="VD: SV2024001" autocomplete="off" />
+          <button class="btn">Tra cứu</button>
+        </form>
+        <div class="list" id="mine-list"></div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- booking modal -->
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const pad = (n) => String(n).padStart(2, '0');
+const WD = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+const WD_FULL = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+let cfg, selectedDate, bookings = [], todayBookings = [];
+const codes = JSON.parse(localStorage.getItem('lib-codes') || '{}'); // bookingId -> cancel code
+const profile = JSON.parse(localStorage.getItem('lib-profile') || '{}');
+
+const parseDate = (s) => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+const fmtDate = (s) => { const d = parseDate(s); return `${WD_FULL[d.getDay()]}, ${d.getDate()}/${d.getMonth() + 1}`; };
+const localToday = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
+const room = (id) => cfg.rooms.find((r) => r.id === id);
+
+async function api(path, opts = {}) {
+  const res = await fetch(path, { headers: { 'Content-Type': 'application/json' }, ...opts });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || 'Có lỗi xảy ra');
+  return data;
+}
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+// ---------- init ----------
+async function init() {
+  cfg = await api('/api/config');
+  selectedDate = localToday();
+  renderDays();
+  await refresh();
+  tick(); setInterval(tick, 1000);
+  setInterval(refresh, 30000);
+  if (profile.studentId) $('#mine-id').value = profile.studentId;
+}
+
+function tick() {
+  const n = new Date();
+  $('#clock').textContent = `${pad(n.getHours())}:${pad(n.getMinutes())}`;
+  $('#today').textContent = `${WD_FULL[n.getDay()]}, ${n.getDate()}/${n.getMonth() + 1}/${n.getFullYear()}`;
+  const h = n.getHours();
+  $('#greeting').textContent = h < 11 ? 'Chào buổi sáng, sẵn sàng học chưa?' : h < 14 ? 'Buổi trưa tập trung nhé!' : h < 18 ? 'Buổi chiều năng suất nào!' : 'Học buổi tối thật hiệu quả!';
+}
+
+async function refresh() {
+  const today = localToday();
+  const [b, tb] = await Promise.all([
+    api('/api/bookings?date=' + selectedDate),
+    selectedDate === today ? null : api('/api/bookings?date=' + today),
+  ]);
+  bookings = b; todayBookings = tb || b;
+  renderRooms(); renderGrid();
+}
+
+// ---------- room cards ----------
+function renderRooms() {
+  const h = new Date().getHours();
+  const open = h >= cfg.openHour && h < cfg.closeHour;
+  let freeCount = 0;
+  $('#rooms').innerHTML = cfg.rooms.map((r) => {
+    const cur = todayBookings.find((b) => b.roomId === r.id && h >= b.start && h < b.end);
+    let cls = '', text = 'Đang trống';
+    if (!open) { cls = 'closed'; text = 'Ngoài giờ mở cửa'; }
+    else if (cur) { cls = 'busy'; text = `Đang dùng đến ${cur.end}:00`; }
+    else {
+      freeCount++;
+      const next = todayBookings.filter((b) => b.roomId === r.id && b.start > h).sort((a, b) => a.start - b.start)[0];
+      text = next ? `Trống đến ${next.start}:00` : 'Trống cả ngày';
+    }
+    return `<div class="room" style="--c:${r.color}">
+      <div class="name">${esc(r.name)}</div>
+      <div class="meta">${esc(r.floor)} · 👤 ${r.capacity} người</div>
+      <div class="tags">${r.amenities.map((a) => `<span class="tag">${esc(a)}</span>`).join('')}</div>
+      <div class="status ${cls}"><span class="dot"></span>${text}</div>
+    </div>`;
+  }).join('');
+  $('#summary').textContent = open
+    ? `Hiện có ${freeCount}/${cfg.rooms.length} phòng đang trống · Mở cửa ${cfg.openHour}:00 – ${cfg.closeHour}:00`
+    : `Thư viện mở cửa ${cfg.openHour}:00 – ${cfg.closeHour}:00 · Bạn vẫn có thể đặt trước`;
+}
+
+// ---------- days ----------
+function renderDays() {
+  const base = parseDate(localToday());
+  let html = '';
+  for (let i = 0; i < cfg.maxDaysAhead; i++) {
+    const d = new Date(base.getFullYear(), base.getMonth(), base.getDate() + i);
+    const s = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    html += `<button class="day ${s === selectedDate ? 'active' : ''}" data-date="${s}"><small>${i === 0 ? 'Hôm nay' : WD[d.getDay()]}</small><b>${d.getDate()}</b></button>`;
+  }
+  $('#days').innerHTML = html;
+}
+$('#days').addEventListener('click', (e) => {
+  const b = e.target.closest('.day'); if (!b) return;
+  selectedDate = b.dataset.date; renderDays(); refresh();
+});
+
+// ---------- grid ----------
+function renderGrid() {
+  const isToday = selectedDate === localToday();
+  const nowH = new Date().getHours();
+  let html = '<thead><tr><th></th>';
+  for (let h = cfg.openHour; h < cfg.closeHour; h++) html += `<th>${h}:00</th>`;
+  html += '</tr></thead><tbody>';
+  for (const r of cfg.rooms) {
+    html += `<tr style="--c:${r.color}"><th class="room-h"><i></i>${esc(r.name)}</th>`;
+    for (let h = cfg.openHour; h < cfg.closeHour; ) {
+      const b = bookings.find((x) => x.roomId === r.id && h >= x.start && h < x.end);
+      const nowCls = isToday && h === nowH ? ' now' : '';
+      if (b) {
+        const span = b.end - h;
+        html += `<td class="busy${nowCls}" colspan="${span}" title="${b.start}:00–${b.end}:00">${esc(b.name)} · ${b.start}–${b.end}h</td>`;
+        h += span;
+      } else if (isToday && h <= nowH) {
+        html += `<td class="past${nowCls}"></td>`; h++;
+      } else {
+        html += `<td class="free${nowCls}" data-room="${r.id}" data-h="${h}"></td>`; h++;
+      }
+    }
+    html += '</tr>';
+  }
+  $('#grid').innerHTML = html + '</tbody>';
+}
+$('#grid').addEventListener('click', (e) => {
+  const td = e.target.closest('td.free'); if (!td) return;
+  openBooking(Number(td.dataset.room), Number(td.dataset.h));
+});
+
+// ---------- booking modal ----------
+let draft = null;
+function openBooking(roomId, start) {
+  const r = room(roomId);
+  const nextStart = bookings.filter((b) => b.roomId === roomId && b.start > start).reduce((m, b) => Math.min(m, b.start), cfg.closeHour);
+  const maxDur = Math.min(cfg.maxHoursPerDay, nextStart - start);
+  draft = { roomId, start, dur: 1, maxDur };
+  const modal = $('#modal');
+  modal.style.setProperty('--c', r.color);
+  modal.innerHTML = `
+    <div class="modal-head"><h3>${esc(r.name)}</h3><p>${fmtDate(selectedDate)} · ${esc(r.floor)} · tối đa ${r.capacity} người</p></div>
+    <form class="modal-body" id="book-form">
+      <div class="field"><label>Thời lượng</label>
+        <div class="durations">${[1, 2, 3].map((d) => `<button type="button" data-d="${d}" ${d > maxDur ? 'disabled' : ''} class="${d === 1 ? 'active' : ''}">${d} giờ</button>`).join('')}</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:8px" id="range"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Họ và tên *</label><input name="name" required value="${esc(profile.name || '')}" placeholder="Nguyễn Văn A" /></div>
+        <div class="field"><label>Mã thẻ / MSSV *</label><input name="studentId" required value="${esc(profile.studentId || '')}" placeholder="SV2024001" /></div>
+      </div>
+      <div class="field"><label>Email hoặc SĐT</label><input name="contact" value="${esc(profile.contact || '')}" placeholder="để thư viện liên hệ khi cần" /></div>
+      <div class="field"><label>Mục đích</label><input name="purpose" placeholder="Ôn thi, làm nhóm…" /></div>
+      <div class="err" id="err"></div>
+      <div class="modal-foot"><button type="button" class="btn ghost" data-close>Huỷ</button><button class="btn" id="submit">Xác nhận đặt phòng</button></div>
+    </form>`;
+  updateRange();
+  $('#overlay').classList.add('show');
+  setTimeout(() => modal.querySelector(profile.name ? 'input[name=purpose]' : 'input[name=name]').focus(), 50);
+}
+function updateRange() {
+  $('#range').textContent = `Từ ${draft.start}:00 đến ${draft.start + draft.dur}:00`;
+}
+function closeModal() { $('#overlay').classList.remove('show'); }
+$('#overlay').addEventListener('click', (e) => {
+  if (e.target.id === 'overlay' || e.target.closest('[data-close]')) return closeModal();
+  const d = e.target.closest('.durations button');
+  if (d && !d.disabled) {
+    draft.dur = Number(d.dataset.d);
+    document.querySelectorAll('.durations button').forEach((b) => b.classList.toggle('active', b === d));
+    updateRange();
+  }
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+$('#overlay').addEventListener('submit', async (e) => {
+  if (e.target.id !== 'book-form') return;
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const body = {
+    name: f.get('name'), studentId: f.get('studentId'), contact: f.get('contact'), purpose: f.get('purpose'),
+    roomId: draft.roomId, date: selectedDate, start: draft.start, end: draft.start + draft.dur,
+  };
+  const btn = $('#submit'); btn.disabled = true; btn.textContent = 'Đang đặt…';
+  try {
+    const b = await api('/api/bookings', { method: 'POST', body: JSON.stringify(body) });
+    codes[b.id] = b.code; localStorage.setItem('lib-codes', JSON.stringify(codes));
+    Object.assign(profile, { name: body.name, studentId: b.studentId, contact: body.contact });
+    localStorage.setItem('lib-profile', JSON.stringify(profile));
+    $('#mine-id').value = b.studentId;
+    showSuccess(b);
+    refresh();
+  } catch (err) {
+    $('#err').textContent = err.message; btn.disabled = false; btn.textContent = 'Xác nhận đặt phòng';
+    refresh();
+  }
+});
+function showSuccess(b) {
+  const r = room(b.roomId);
+  $('#modal').innerHTML = `
+    <div class="success">
+      <div class="check">✓</div>
+      <h3 style="margin:0;font-family:Lora,serif;font-size:22px">Đặt phòng thành công!</h3>
+      <p style="color:var(--muted);margin:8px 0 0">${esc(r.name)} · ${fmtDate(b.date)} · ${b.start}:00–${b.end}:00</p>
+      <div class="code">${b.code}</div>
+      <p style="font-size:13px;color:var(--muted);margin:0 0 18px">Mã huỷ lịch — hãy lưu lại. Xuất trình mã này khi nhận phòng.</p>
+      <button class="btn" data-close>Xong</button>
+    </div>`;
+}
+
+// ---------- my bookings ----------
+document.querySelectorAll('.tabs button').forEach((b) => b.addEventListener('click', () => {
+  document.querySelectorAll('.tabs button').forEach((x) => x.classList.toggle('active', x === b));
+  $('#view-schedule').classList.toggle('hidden', b.dataset.view !== 'schedule');
+  $('#view-mine').classList.toggle('hidden', b.dataset.view !== 'mine');
+  if (b.dataset.view === 'mine' && $('#mine-id').value) loadMine();
+}));
+$('#mine-form').addEventListener('submit', (e) => { e.preventDefault(); loadMine(); });
+
+async function loadMine() {
+  const id = $('#mine-id').value.trim();
+  if (!id) return;
+  try {
+    const list = await api('/api/my-bookings?studentId=' + encodeURIComponent(id));
+    $('#mine-list').innerHTML = list.length ? list.map((b) => {
+      const r = room(b.roomId);
+      return `<div class="item" style="--c:${r.color}">
+        <div class="info">
+          <div class="when">${fmtDate(b.date)} · ${b.start}:00 – ${b.end}:00</div>
+          <div>${esc(r.name)} · ${esc(r.floor)}${b.purpose ? ' · ' + esc(b.purpose) : ''}</div>
+        </div>
+        <button class="btn danger" data-cancel="${b.id}">Huỷ lịch</button>
+      </div>`;
+    }).join('') : `<div class="empty"><div class="big">🗓️</div>Chưa có lịch đặt nào sắp tới.</div>`;
+  } catch (err) { toast(err.message); }
+}
+$('#mine-list').addEventListener('click', async (e) => {
+  const btn = e.target.closest('[data-cancel]'); if (!btn) return;
+  const id = btn.dataset.cancel;
+  let code = codes[id];
+  if (!code) {
+    // inline code input instead of a browser prompt
+    const item = btn.closest('.item');
+    if (!item.querySelector('.code-in')) {
+      btn.insertAdjacentHTML('beforebegin', `<input class="code-in" placeholder="Mã huỷ" style="width:120px;text-transform:uppercase" />`);
+      item.querySelector('.code-in').focus();
+      btn.textContent = 'Xác nhận huỷ';
+      return;
+    }
+    code = item.querySelector('.code-in').value;
+  }
+  btn.disabled = true;
+  try {
+    await api('/api/bookings/' + id, { method: 'DELETE', body: JSON.stringify({ code }) });
+    delete codes[id]; localStorage.setItem('lib-codes', JSON.stringify(codes));
+    toast('Đã huỷ lịch đặt phòng');
+    loadMine(); refresh();
+  } catch (err) { toast(err.message); btn.disabled = false; }
+});
+
+init().catch((e) => { $('#summary').textContent = 'Không kết nối được máy chủ: ' + e.message; });
+</script>
+</body>
+</html>

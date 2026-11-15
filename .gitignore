@@ -1,0 +1,16 @@
+# Tài liệu riêng của giảng viên (kịch bản nói, hướng dẫn demo, công cụ dựng repo mẫu)
+tmp/
+
+# Slide mùa trước (tham khảo nội bộ)
+slide-mua-1/
+
+# Bản demo tạo khi tập / trình bày
+demo/demo-fresh/
+demo/demo-progress/
+demo/library-booking/data.json
+*.log
+
+# OS / editor
+.DS_Store
+node_modules/
+.env

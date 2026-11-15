@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Từ Vibe Coding đến Spec-Driven</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+:root{
+  --paper:#f5f0e4; --paper2:#efe8d8; --ink:#262626; --ink2:#4a4a4a; --mute:#7a7468;
+  --green:#3f6236; --green2:#5b7f4f; --greenbg:#dfe6d2; --red:#b3332b; --redbg:#f3d9d3;
+  --yellow:#f6e08f; --orange:#c97a2b; --blue:#3b5f8a;
+  --hand:'Patrick Hand','Pangolin','Comic Sans MS',cursive;
+  --title:'Pangolin','Patrick Hand','Comic Sans MS',cursive;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+  --wob:255px 18px 225px 15px / 15px 225px 18px 255px;
+  --wob2:15px 225px 15px 255px / 255px 15px 225px 18px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#2a2824;overflow:hidden;font-family:var(--hand);color:var(--ink)}
+#stage{position:absolute;width:1600px;height:900px;left:50%;top:50%;transform-origin:0 0}
+.slide{position:absolute;inset:0;padding:56px 80px 60px;display:none;flex-direction:column;
+  background:var(--paper);
+  background-image:
+    radial-gradient(ellipse at 20% 10%,rgba(255,255,255,.55),transparent 60%),
+    radial-gradient(ellipse at 90% 95%,rgba(160,140,100,.12),transparent 55%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .25  0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  font-size:28px;line-height:1.35}
+.slide.active{display:flex}
+.slide aside.notes{display:none}
+
+/* ---------- Typography ---------- */
+h1,h2,h3{font-family:var(--title);font-weight:400;margin:0;letter-spacing:.5px}
+h1.t{font-size:62px;text-transform:uppercase;text-align:center;line-height:1.1}
+h1.t .g{color:var(--green)}
+.brush{display:block;margin:6px auto 0;width:62%;height:16px}
+.sub{text-align:center;font-size:30px;color:var(--ink2);margin-top:8px}
+.secno{position:absolute;left:34px;top:34px;background:var(--green);color:#f5f0e4;font-family:var(--title);font-size:30px;
+  padding:4px 22px 4px 16px;border-radius:var(--wob);transform:rotate(-3deg)}
+.g{color:var(--green)} .r{color:var(--red)} .o{color:var(--orange)} .m{color:var(--mute)} .b{color:var(--blue)}
+.hl{background:linear-gradient(transparent 55%,var(--yellow) 55%,var(--yellow) 92%,transparent 92%);padding:0 3px}
+.u{text-decoration:underline;text-decoration-color:var(--green2);text-decoration-thickness:3px;text-underline-offset:6px}
+.ur{text-decoration:underline wavy;text-decoration-color:var(--red);text-decoration-thickness:2px;text-underline-offset:6px}
+code,.mono{font-family:var(--mono);font-size:.78em}
+small{font-size:.8em}
+ul.clean{list-style:none;padding:0;margin:0} ul.clean li{margin:6px 0}
+ul.dots{margin:6px 0;padding-left:26px} ul.dots li{margin:4px 0}
+.ck::before{content:"✔";color:var(--green);margin-right:10px;font-weight:700}
+.xx::before{content:"✘";color:var(--red);margin-right:10px;font-weight:700}
+
+/* ---------- Sketchy boxes ---------- */
+.box{position:relative;padding:20px 24px;border:2.5px solid var(--ink);border-radius:var(--wob);background:rgba(255,255,255,.28)}
+.box.alt{border-radius:var(--wob2)}
+.box.green{border-color:var(--green);background:rgba(223,230,210,.55)}
+.box.red{border-color:var(--red);background:rgba(243,217,211,.45)}
+.box.dash{border-style:dashed}
+.box.fill{background:var(--greenbg)}
+.box h3{font-size:32px;margin-bottom:8px}
+.tag{display:inline-block;background:var(--ink);color:var(--paper);padding:4px 22px;font-family:var(--title);font-size:30px;border-radius:var(--wob);transform:rotate(-1deg)}
+.tag.red{background:var(--red)} .tag.green{background:var(--green)}
+.tag.light{background:#e4dac3;color:var(--ink)}
+.num{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;
+  background:var(--green);color:#fff;font-family:var(--title);font-size:26px;flex:none}
+.num.red{background:var(--red)} .num.ink{background:var(--ink)}
+.chot{margin-top:auto;border:2.5px dashed var(--ink2);border-radius:var(--wob2);padding:14px 26px;font-size:30px;
+  display:block;background:rgba(246,224,143,.25)}
+.chot::before{content:"★";font-size:38px;color:var(--orange);margin-right:16px;vertical-align:-4px}
+.chot.big{font-size:36px;text-align:center}
+
+/* ---------- Layout ---------- */
+.row{display:flex;gap:28px} .col{display:flex;flex-direction:column;gap:18px}
+.grow{flex:1} .center{text-align:center} .mid{align-items:center} .jc{justify-content:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.vline{width:0;border-left:2.5px dashed var(--ink2);align-self:stretch}
+.mt{margin-top:22px} .mt2{margin-top:36px} .mb{margin-bottom:18px}
+.flow{display:flex;align-items:stretch;gap:0}
+.flow .step{flex:1;text-align:center;padding:14px 10px;position:relative}
+.flow .arrow{align-self:center;font-size:40px;color:var(--ink2);padding:0 4px}
+.step .ic{height:84px;display:flex;justify-content:center;align-items:center;margin:6px 0}
+.step h4{font-family:var(--title);font-weight:400;font-size:27px;margin:4px 0}
+.step p{margin:2px 0;font-size:22px;color:var(--ink2)}
+.ill{display:block;margin:auto}
+svg .s{fill:none;stroke:var(--ink);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.sketch{filter:url(#rough)}
+
+/* tables */
+table.t{border-collapse:collapse;width:100%;font-size:24px}
+table.t th{font-family:var(--title);font-weight:400;text-align:left;border-bottom:2.5px solid var(--ink);padding:8px 12px;font-size:26px}
+table.t td{border-bottom:1.5px dashed #b8ae98;padding:8px 12px;vertical-align:top}
+pre.code{font-family:var(--mono);font-size:19px;line-height:1.45;background:#272822;color:#f2efe6;padding:18px 22px;border-radius:10px;margin:0;white-space:pre;overflow:hidden}
+pre.code .c{color:#9a9a86} pre.code .k{color:#a6e22e} pre.code .y{color:#e6db74} pre.code .p{color:#f92672} pre.code .b{color:#66d9ef}
+.paper{background:#fffdf7;border:1.5px solid #d6cdb6;box-shadow:4px 5px 0 rgba(0,0,0,.08);padding:18px 24px;font-size:22px;border-radius:4px}
+.paper.mono{font-family:var(--mono);font-size:17px;line-height:1.5;white-space:pre}
+
+.ex{display:flex;flex-wrap:wrap;gap:5px 8px;align-items:center;margin-top:4px}
+.ex>b{font-family:var(--mono);font-size:15px;color:var(--mute);font-weight:400;margin-right:2px}
+.ex>span{font-size:18.5px;color:var(--ink2);border:1.5px dashed #b8ae98;border-radius:14px;padding:1px 11px;background:rgba(255,255,255,.45)}
+.key{font-size:24px;line-height:1.3}
+.chot b,.key b{font-weight:400;color:var(--green)}
+/* fragments */
+.frag{opacity:0;transform:translateY(14px);transition:opacity .45s ease,transform .45s ease}
+.frag.on{opacity:1;transform:none}
+svg .frag{transform:none}
+.frag.pop{transform:scale(.92)} .frag.pop.on{transform:none}
+.frag.dim-after.on.past{opacity:.45}
+
+/* chrome */
+#bar{position:fixed;left:0;bottom:0;height:5px;background:var(--green2);transition:width .3s;z-index:5}
+#pg{position:fixed;right:16px;bottom:10px;color:#9b9384;font:16px var(--hand);z-index:5}
+#help{position:fixed;left:16px;bottom:10px;color:#77705f;font:15px var(--hand);z-index:5}
+#notes-ov{position:fixed;left:0;right:0;bottom:0;max-height:42%;overflow:auto;background:rgba(20,20,18,.94);color:#f2ecdc;
+  font:22px/1.45 var(--hand);padding:18px 30px;display:none;z-index:9;white-space:pre-wrap}
+body.overview{overflow:auto}
+body.overview #stage{position:static;transform:none!important;width:auto;height:auto;display:grid;grid-template-columns:repeat(auto-fill,400px);gap:18px;padding:24px;justify-content:center}
+body.overview .slide{display:flex;position:relative;width:1600px;height:900px;zoom:.25;cursor:pointer;outline:6px solid transparent}
+body.overview .slide.active{outline-color:var(--yellow)}
+body.overview .frag{opacity:1;transform:none}
+body.overview #bar,body.overview #pg{display:none}
+
+/* presenter */
+body.presenter{background:#1d1c1a;color:#eee;overflow:auto;font-family:var(--hand)}
+#pv{display:none;padding:22px 30px;gap:24px;grid-template-columns:1.2fr 1fr;height:100vh}
+body.presenter #pv{display:grid} body.presenter #stage,body.presenter #bar,body.presenter #pg,body.presenter #help{display:none}
+#pv .clock{font-size:54px;font-family:var(--mono);color:var(--yellow)}
+#pv .cur{font-size:30px;color:#fff;margin:6px 0} #pv .nxt{font-size:22px;color:#a9a294}
+#pv .nt{font-size:25px;line-height:1.5;white-space:pre-wrap;overflow:auto;background:#2a2926;padding:18px 22px;border-radius:10px}
+#pv button{font:20px var(--hand);padding:8px 18px;margin-right:8px;border-radius:8px;border:0;background:#3f6236;color:#fff;cursor:pointer}
+#pv .plan{font-size:19px;color:#bdb6a7;line-height:1.6}
+#pv .plan b{color:var(--yellow);font-weight:400}
+
+@media print{
+  @page{size:1600px 900px;margin:0}
+  html,body{overflow:visible;background:none;height:auto}
+  #stage{position:static;transform:none!important;width:1600px;height:auto}
+  .slide{display:flex!important;position:relative;width:1600px;height:900px;page-break-after:always;break-after:page}
+  .frag{opacity:1!important;transform:none!important}
+  #bar,#pg,#help,#notes-ov{display:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== SVG SYMBOLS (hand-drawn style) ===================== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="3.2"/></filter>
+    <symbol id="robot" viewBox="0 0 100 110">
+      <g fill="none" stroke="#262626" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="50" y1="6" x2="50" y2="20"/><circle cx="50" cy="6" r="4" fill="#5b7f4f"/>
+      <rect x="18" y="20" width="64" height="46" rx="18"/><rect x="28" y="30" width="44" height="26" rx="11" fill="#262626"/>
+      <rect x="10" y="36" width="8" height="16" rx="3"/><rect x="82" y="36" width="8" height="16" rx="3"/>
+      <rect x="28" y="70" width="44" height="34" rx="10"/><circle cx="50" cy="86" r="5"/></g>
+      <ellipse cx="40" cy="43" rx="5" ry="6" fill="#9fd88a"/><ellipse cx="60" cy="43" rx="5" ry="6" fill="#9fd88a"/>
+    </symbol>
+    <symbol id="person" viewBox="0 0 100 120">
+      <g fill="none" stroke="#262626" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="30" r="18" fill="#fffdf7"/><path d="M33 24c4-14 30-16 35-2c-6-4-14-6-20 0c-4-4-10-2-15 2z" fill="#262626"/>
+      <path d="M44 34q6 4 12 0"/><path d="M20 116c0-34 12-50 30-50s30 16 30 50" fill="#e8e2d2"/><path d="M42 68l8 12l8-12"/></g>
+      <circle cx="43" cy="28" r="2" fill="#262626"/><circle cx="57" cy="28" r="2" fill="#262626"/>
+    </symbol>
+    <symbol id="laptop" viewBox="0 0 120 80">
+      <g fill="none" stroke="#262626" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 8h76v50H22z" fill="#d9d2c0"/><path d="M8 62h104l-8 12H16z" fill="#e8e2d2"/><circle cx="60" cy="33" r="5"/></g>
+    </symbol>
+    <symbol id="hut" viewBox="0 0 160 130">
+      <g fill="none" stroke="#262626" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M10 64L80 10l70 54"/><path d="M22 60L80 18l58 42" />
+      <path d="M30 58v62h100V58"/><path d="M66 120V82h26v38"/><rect x="100" y="76" width="18" height="16"/>
+      <path d="M36 52l10-8M50 42l10-8M64 32l10-8M90 26l10 8M104 36l10 8M118 46l10 8" stroke-width="2"/>
+      <path d="M2 122h156" stroke-width="2"/></g>
+    </symbol>
+    <symbol id="building" viewBox="0 0 180 160">
+      <g fill="none" stroke="#262626" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="20" y="40" width="90" height="112"/><path d="M110 70h50v82h-50"/>
+      <path d="M32 54h14v12H32zM58 54h14v12H58zM84 54h14v12H84zM32 80h14v12H32zM58 80h14v12H58zM84 80h14v12H84zM32 106h14v12H32zM58 106h14v12H58zM84 106h14v12H84zM122 84h12v10h-12zM142 84h12v10h-12zM122 108h12v10h-12zM142 108h12v10h-12z" stroke-width="2"/>
+      <path d="M150 70V8M118 14h56M150 14l-26 0M128 14v20" stroke-width="2.5"/><rect x="122" y="34" width="12" height="8" stroke-width="2"/>
+      <path d="M4 152h172"/></g>
+    </symbol>
+    <symbol id="doc" viewBox="0 0 90 110">
+      <g fill="none" stroke="#262626" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6h50l22 22v76H10z" fill="#fffdf7"/><path d="M60 6v22h22"/>
+      <path d="M22 44h44M22 58h44M22 72h30" stroke-width="2.5"/><path d="M22 88l6 6l12-12" stroke="#3f6236"/></g>
+    </symbol>
+    <symbol id="bulb" viewBox="0 0 80 100">
+      <g fill="none" stroke="#262626" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M40 12a24 24 0 0 0-14 44c4 4 5 8 5 14h18c0-6 1-10 5-14a24 24 0 0 0-14-44z" fill="#f6e08f"/>
+      <path d="M31 76h18M33 84h14"/><path d="M8 18l7 5M72 18l-7 5M40 0v6M2 46h7M78 46h-7" stroke-width="2.5"/></g>
+    </symbol>
+    <symbol id="sign" viewBox="0 0 100 110">
+      <g fill="none" stroke="#262626" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M48 10v96"/><path d="M14 18h66l12 12l-12 12H14z" fill="#d9c7a3"/><path d="M84 52H22l-12 12l12 12h62z" fill="#e8dcc2"/><path d="M30 106h40"/></g>
+    </symbol>
+    <symbol id="check" viewBox="0 0 90 110">
+      <g fill="none" stroke="#262626" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="12" width="70" height="92" rx="6" fill="#fffdf7"/><rect x="30" y="4" width="30" height="14" rx="4" fill="#d9d2c0"/>
+      <path d="M22 40l5 5l9-9M22 62l5 5l9-9M22 84l5 5l9-9" stroke="#3f6236"/><path d="M44 42h26M44 64h26M44 86h20" stroke-width="2.5"/></g>
+    </symbol>
+    <symbol id="test" viewBox="0 0 100 100">
+      <g fill="none" stroke="#262626" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="84" height="84" rx="10" fill="#fffdf7"/><path d="M26 52l14 14l34-34" stroke="#3f6236" stroke-width="6"/></g>
+    </symbol>
+    <symbol id="tree" viewBox="0 0 100 100">
+      <g fill="none" stroke="#262626" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="34" y="6" width="32" height="16" rx="3"/><path d="M50 22v14M18 36h64M18 36v12M50 36v12M82 36v12"/>
+      <rect x="6" y="48" width="24" height="14" rx="3"/><rect x="38" y="48" width="24" height="14" rx="3"/><rect x="70" y="48" width="24" height="14" rx="3"/>
+      <path d="M18 62v10M50 62v10M82 62v10M10 72h16v12H10zM42 72h16v12H42zM74 72h16v12H74z" stroke-width="2"/></g>
+    </symbol>
+    <symbol id="target" viewBox="0 0 100 100">
+      <g fill="none" stroke="#262626" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="46" cy="54" r="38"/><circle cx="46" cy="54" r="24"/><circle cx="46" cy="54" r="9" fill="#b3332b"/><path d="M46 54L90 10M80 10h10v10"/></g>
+    </symbol>
+    <symbol id="brush" viewBox="0 0 600 16" preserveAspectRatio="none">
+      <path d="M4 10 C120 3 260 13 380 7 S540 5 596 9" stroke="#3f6236" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path d="M30 13 C160 8 300 14 420 10 S560 9 580 12" stroke="#3f6236" stroke-width="2" fill="none" stroke-linecap="round" opacity=".6"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div id="stage">
+
+<!-- 15 slides. Lời nói chi tiết: ../kich-ban-noi.md -->
+
+<!-- 1 ─────────────────────────────────────────── -->
+<section class="slide" data-title="Tiêu đề" data-part="0. Mở đầu (0–5')">
+  <div class="row mid" style="height:100%;gap:40px">
+    <div class="grow">
+      <div class="tag green" style="font-size:26px">SOFTWARE ENGINEERING × AI</div>
+      <h1 style="font-family:var(--title);font-size:92px;line-height:1.02;margin-top:26px;text-transform:uppercase">
+        Từ <span class="r">Vibe Coding</span><br>đến <span class="g">Spec-Driven</span></h1>
+      <svg class="brush" style="margin:14px 0 0;width:80%"><use href="#brush"/></svg>
+      <p style="font-size:40px;margin:26px 0 0">Code nhanh là <span class="hl">kỹ năng</span>.<br>Code đúng là <span class="hl">nghề</span>.</p>
+      <p class="m" style="font-size:26px;margin-top:40px">Nguyễn Trí Dũng · CTO · Builder · AI-native Software Engineering</p>
+    </div>
+    <div class="sketch" style="width:520px;position:relative;height:560px">
+      <svg width="260" height="210" style="position:absolute;left:0;top:30px"><use href="#hut"/></svg>
+      <div style="position:absolute;left:30px;top:250px;font-size:28px" class="r">vibe 🎸</div>
+      <div style="position:absolute;left:210px;top:180px;font-size:70px;color:var(--orange)">➜</div>
+      <svg width="300" height="270" style="position:absolute;right:0;top:120px"><use href="#building"/></svg>
+      <svg width="130" height="160" style="position:absolute;left:60px;bottom:30px"><use href="#doc"/></svg>
+      <div style="position:absolute;left:200px;bottom:70px;font-size:28px" class="g">spec 📐</div>
+    </div>
+  </div>
+<aside class="notes">§1 (0:00–2:00) Chào · giới thiệu 60s · 3 câu hỏi giơ tay (nói, không chiếu).</aside>
+</section>
+
+<!-- 2 ─────────────────────────────────────────── -->
+<section class="slide" data-title="Một prompt, 2 phút" data-part="0. Mở đầu (0–5')">
+  <h1 class="t">1 câu prompt · <span class="g">2 phút 37 giây</span></h1>
+  <svg class="brush"><use href="#brush"/></svg>
+  <div class="row mt" style="gap:28px;align-items:flex-start">
+    <div class="col" style="width:470px">
+      <pre class="code" style="font-size:22px"><span class="c">$</span> claude
+<span class="y">&gt; làm cho tôi app đặt phòng
+  tự học cho thư viện, có 6 phòng,
+  đẹp, chạy được luôn</span></pre>
+      <div class="box green" style="font-size:23px"><b>AI tự nghĩ ra</b> (không ai yêu cầu):
+        <ul class="clean" style="font-size:21px;margin-top:6px">
+          <li class="ck frag" data-f="1">Mở cửa 7:00–21:00</li><li class="ck frag" data-f="2">Tối đa 3 giờ / người / ngày</li><li class="ck frag" data-f="3">Đặt trước tối đa 7 ngày</li>
+          <li class="ck frag" data-f="4">Chặn trùng giờ, chặn giờ đã qua</li><li class="ck frag" data-f="5">Ẩn họ, chỉ hiện tên</li><li class="ck frag" data-f="6">Mã huỷ 6 ký tự</li></ul></div>
+    </div>
+    <div class="grow" style="position:relative">
+      <img src="img/studyroom-app.jpg" style="width:100%;border-radius:10px;box-shadow:6px 8px 0 rgba(0,0,0,.12);border:2px solid #333" alt="App đặt phòng do AI tạo">
+      <div class="tag red" style="position:absolute;right:-14px;bottom:-18px;font-size:26px;transform:rotate(-3deg)">Opus 5.5 · không sửa 1 dòng</div>
+    </div>
+  </div>
+  <div class="chot frag" data-f="9">Vậy… <b>còn cần kỹ sư phần mềm không?</b> 🤔</div>
+<aside class="notes">§2 (2:00–5:00) Show app thật (localhost:3000). Khen thật lòng. Đặt câu hỏi treo: còn cần kỹ sư không? → cả buổi trả lời câu này.</aside>
+</section>
+
+<!-- 3 ─────────────────────────────────────────── -->
+<section class="slide" data-title="Vibe coding tỏa sáng khi nào" data-part="1. Vibe coding (5–15')">
+  <div class="secno">1/-</div>
+  <h1 class="t">Vibe coding: <span class="g">siêu năng lực thật</span></h1>
+  <svg class="brush"><use href="#brush"/></svg>
+  <div class="paper center mt" style="font-size:26px">"…fully give in to the vibes… and <span class="hl">forget that the code even exists</span>." <span class="m" style="font-size:21px">— Andrej Karpathy, 02/2025</span></div>
+  <div class="grid4 mt" style="font-size:22px;gap:18px">
+    <div data-f="1" class="frag box"><div style="font-size:46px">🧪</div><h3 style="font-size:27px">Thử ý tưởng</h3>
+      <p><b>Tình huống:</b> muốn biết thư viện có cần app đặt phòng không</p><p class="g">→ 2 phút có app, mang đi hỏi thủ thư <b>chiều nay</b></p></div>
+    <div data-f="2" class="frag box alt"><div style="font-size:46px">📚</div><h3 style="font-size:27px">Học cái mới</h3>
+      <p><b>Tình huống:</b> chưa hiểu WebSocket là gì</p><p class="g">→ bảo AI làm app chat, chạy thử rồi <b>đọc ngược</b> code</p></div>
+    <div data-f="3" class="frag box"><div style="font-size:46px">🏆</div><h3 style="font-size:27px">Thi / demo</h3>
+      <p><b>Tình huống:</b> hackathon 24h, cần bản chạy được để trình bày</p><p class="g">→ demo xong là <b>xong việc</b></p></div>
+    <div data-f="4" class="frag box alt"><div style="font-size:46px">🔧</div><h3 style="font-size:27px">Việc vặt</h3>
+      <p><b>Tình huống:</b> gộp 300 file Excel điểm danh thành 1</p><p class="g">→ script chạy <b>1 lần</b>, dùng xong bỏ</p></div>
+  </div>
+  <div class="chot frag" data-f="5">Điểm chung: <b>sai cũng không ai mất gì</b> · <b>dùng xong có thể vứt</b>.</div>
+<aside class="notes">§3 (5:00–9:00) Định nghĩa + 4 tình huống cụ thể. Chốt điểm chung: rủi ro thấp, vứt được.</aside>
+</section>
+
+<!-- 4 ─────────────────────────────────────────── -->
+<section class="slide" data-title="Đổi đề: có tiền thật" data-part="1. Vibe coding (5–15')">
+  <div class="secno">DEMO</div>
+  <h1 class="t">Đổi đề: <span class="r">có tiền thật</span> 💰</h1>
+  <svg class="brush"><use href="#brush"/></svg>
+  <div class="row mt" style="gap:28px">
+    <div class="col" style="width:560px">
+      <pre class="code" style="font-size:21px"><span class="c">$</span> claude
+<span class="y">&gt; làm cho tôi app cho nhà đầu tư
+  cầm cố cổ phiếu trong tài khoản
+  chứng khoán để vay tiền ngân hàng,
+  có tính lãi hằng ngày, đẹp,
+  chạy được luôn</span></pre>
+      <div class="box green" style="font-size:22px">Kết quả: <b>766 dòng</b>, đẹp, có biểu đồ lãi, cảnh báo call margin, kịch bản giá, xuất CSV… 👏<br><span class="m">AI còn ghi chú: "số liệu là giả định".</span> Ai đọc dòng đó?</div>
+    </div>
+    <div class="col grow">
+      <div class="box red frag" data-f="1"><b class="r">Nhưng AI đã tự quyết thay bạn — về tiền:</b>
+        <table class="t" style="font-size:19.5px;margin-top:6px">
+          <tr><th>AI tự chọn (code thật)</th><th style="width:22%">Ai duyệt?</th></tr>
+          <tr class="frag" data-f="2"><td>Lãi <b>8,9–10,5%/năm</b>, gắn với <b>tên ngân hàng thật</b> (Techcombank, BIDV…)</td><td class="r">không ai</td></tr>
+          <tr class="frag" data-f="3"><td>Chia <b>365</b> ngày · quá hạn phạt <b>150%</b> lãi</td><td class="r">không ai</td></tr>
+          <tr class="frag" data-f="4"><td>Cho vay <b>40–50%</b> giá trị cổ phiếu, tuỳ mã</td><td class="r">không ai</td></tr>
+          <tr class="frag" data-f="5"><td>Cảnh báo ở LTV <b>60%</b>, bán giải chấp ở <b>70%</b></td><td class="r">không ai</td></tr>
+          <tr class="frag" data-f="6"><td>Trả nợ: trừ <b>lãi trước, gốc sau</b></td><td class="r">không ai</td></tr>
+          <tr class="frag" data-f="7"><td>Tiền lãi là <b>số thực</b>, không làm tròn đến đồng</td><td class="r">không ai</td></tr>
+          <tr class="frag" data-f="8"><td>Giá cổ phiếu <b>gõ cứng</b> · dữ liệu lưu <b>trên trình duyệt</b> · <b>không</b> nối ngân hàng/CTCK nào</td><td class="r">—</td></tr>
+        </table></div>
+      <div class="box dash alt center frag" data-f="20" style="font-size:25px">Với thư viện: đoán sai = <b>đặt lại phòng</b>.<br>Với ngân hàng: đoán sai = <b class="r">mất tiền thật, kiện tụng</b>.</div>
+    </div>
+  </div>
+<aside class="notes">§4 (9:00–15:00) LIVE hoặc mở bản đã vibe sẵn (demo/vibe-camco). Mở code, tìm các hằng số lãi/LTV cho phòng xem.
+Câu chốt: không phải AI dở — mà AI ĐOÁN, và không ai duyệt.</aside>
+</section>
+
+<!-- 5 ─────────────────────────────────────────── -->
+<section class="slide" data-title="Tảng băng" data-part="2. Phần chìm (15–35')">
+  <div class="secno">2/-</div>
+  <h1 class="t">Code &amp; UI chỉ là <span class="g">đỉnh tảng băng</span></h1>
+  <svg class="brush"><use href="#brush"/></svg>
+  <div class="row mt mid" style="gap:24px">
+    <div style="width:820px;position:relative;height:600px">
+      <svg viewBox="0 0 820 600" width="820" height="600" class="sketch">
+        <path d="M0 130 Q 102 120 205 130 T 410 130 T 615 130 T 820 130" stroke="#3b5f8a" stroke-width="3" fill="none"/>
+        <rect x="0" y="130" width="820" height="470" fill="#3b5f8a" opacity=".08"/>
+        <path d="M330 130 L370 50 L410 75 L450 40 L490 130" fill="#fffdf7" stroke="#262626" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <g class="frag" data-f="1"><path d="M330 130 L60 290 L90 470 L300 590 L560 590 L770 450 L760 270 L490 130 Z" fill="#e7eef5" stroke="#262626" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g>
+      </svg>
+      <div style="position:absolute;left:350px;top:78px;font-size:22px">UI · Code</div>
+      <div style="position:absolute;left:110px;top:235px;width:620px;font-size:24px;line-height:1.8;text-align:center;color:var(--ink2)">
+        <div class="frag" data-f="2"><b class="g">Business Rules</b>: lãi suất, hạn mức, đáo hạn, cut-off time, ngày lễ</div>
+        <div class="frag" data-f="3"><b class="g">Integration</b>: API Core Banking, công ty chứng khoán, reconciliation</div>
+        <div class="frag" data-f="4"><b class="g">Security</b>: encryption, chữ ký số, phân quyền, audit log</div>
+        <div class="frag" data-f="5"><b class="g">Scalability</b>: 10.000 người dùng cùng lúc</div>
+        <div class="frag" data-f="6"><b class="g">Compliance</b>: KYC, bảo vệ dữ liệu cá nhân</div>
+        <div class="frag" data-f="7"><b class="g">Operations</b>: incident, maintenance, handover</div></div>
+    </div>
+    <div class="col grow" style="font-size:25px">
+      <div class="box">Vibe coding làm <b>phần nổi</b> rất giỏi.</div>
+      <div class="box red alt frag" data-f="8">Phần chìm <b class="r">không thể đoán</b>: phải <b>biết</b>, phải <b>thống nhất</b>, phải <b>đúng 100%</b>.</div>
+      <div class="box green frag" data-f="9">Kỹ sư phần mềm = người <b>nhìn thấy phần chìm</b>.<br><span class="g"><b>System Thinking</b></span></div>
+    </div>
+  </div>
+<aside class="notes">§5 (15:00–20:00) Nhấn → từng tầng: khối chìm → Business Rules → Integration → Security → Scalability → Compliance → Operations → 2 câu chốt bên phải.</aside>
+</section>
+
+<!-- 6 ─────────────────────────────────────────── -->
+<section class="slide" data-title="App không đứng một mình" data-part="2. Phần chìm (15–35')">
+  <div class="secno">2/-</div>
+  <h1 class="t">App của bạn <span class="r">không đứng một mình</span></h1>
+  <svg class="brush"><use href="#brush"/></svg>
+  <div style="position:relative;height:610px;margin-top:10px">
+    <svg viewBox="0 0 1440 610" width="1440" height="610" style="position:absolute;left:0;top:0" class="sketch">
+      <defs><marker id="ah2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#262626"/></marker></defs>
+      <g fill="none" stroke="#262626" stroke-width="3" stroke-linecap="round">
+        <path d="M250 300 H480" marker-end="url(#ah2)" marker-start="url(#ah2)"/>
+        <g class="frag" data-f="1"><path d="M790 250 L1010 140" marker-end="url(#ah2)" marker-start="url(#ah2)"/></g>
+        <g class="frag" data-f="2"><path d="M790 350 L1010 460" marker-end="url(#ah2)" marker-start="url(#ah2)"/></g>
+      </g>
+    </svg>
+    <div class="box center" style="position:absolute;left:0;top:220px;width:250px"><div style="font-size:50px">📱</div><b>10.000 nhà đầu tư</b></div>
+    <div class="box green alt center" style="position:absolute;left:480px;top:200px;width:310px;height:200px"><div style="font-size:50px">🧩</div><b>Hệ thống của bạn</b><br><span class="m" style="font-size:22px">(app vibe 2 phút?)</span></div>
+    <div class="box center frag" data-f="1" style="position:absolute;left:1010px;top:60px;width:330px"><div style="font-size:44px">🏦</div><b>Core Banking</b><br><span style="font-size:21px">giải ngân · thu nợ · tài khoản</span></div>
+    <div class="box alt center frag" data-f="2" style="position:absolute;left:1010px;top:400px;width:330px"><div style="font-size:44px">📈</div><b>Securities Company</b><br><span style="font-size:21px">phong toả cổ phiếu · giá · force sell</span></div>
+    <div class="box dash frag" data-f="3" style="position:absolute;left:560px;top:0;width:420px;font-size:21px">📄 <b>API Contract (2 bên):</b> format, error code, timeout. Gọi lại lần 2 có bị trừ tiền 2 lần? <span class="m">(idempotency)</span></div>
+    <div class="box dash alt frag" data-f="4" style="position:absolute;left:0;top:30px;width:430px;font-size:21px">🔐 <b>Security:</b> encryption, ký số từng request, key để ở đâu, ai được xem dữ liệu?</div>
+    <div class="box dash frag" data-f="5" style="position:absolute;left:0;top:430px;width:440px;font-size:21px">🚦 <b>Load / Rate Limit:</b> 10.000 người bấm "xem dư nợ" = 10.000 request vào Core Banking. Có làm nghẽn ngân hàng?</div>
+    <div class="box dash red alt frag" data-f="6" style="position:absolute;left:470px;top:440px;width:470px;font-size:21px">🕳️ <b>Backdoor &amp; DDoS:</b> app sơ sài nối thẳng API ngân hàng → hacker đi qua app của bạn. DDoS là sập.</div>
+  </div>
+<aside class="notes">§6 (20:00–26:00) → Core Banking → Securities Company → API Contract → Security → Load → Backdoor/DDoS. Mỗi lần nhấn, nói 1 ý.</aside>
+</section>
+
+<!-- 7 ─────────────────────────────────────────── -->
+<section class="slide" data-title="Khi app thành công" data-part="2. Phần chìm (15–35')">
+  <div class="secno">2/-</div>
+  <h1 class="t">Khi app <span class="g">thành công</span>… mới là lúc <span class="r">khó</span></h1>
+  <svg class="brush"><use href="#brush"/></svg>
+  <div class="row mt jc" style="gap:0;align-items:stretch;font-size:26px">
+    <div class="box center" style="width:330px"><div class="tag light">Tháng 1</div><div style="font-size:52px">🚀</div>2 bạn vibe ra app</div>
+    <div class="arrow frag" data-f="1" style="align-self:center;font-size:46px;padding:0 14px">→</div>
+    <div class="box alt green center frag" data-f="1" style="width:330px"><div class="tag green">Tháng 6</div><div style="font-size:52px">🎉</div>10.000 users · business <b>đúng</b>!</div>
+    <div class="arrow frag" data-f="2" style="align-self:center;font-size:46px;padding:0 14px">→</div>
+    <div class="box center frag" data-f="2" style="width:380px"><div class="tag light">Tháng 7</div><div style="font-size:52px">👔➜👩‍💻👨‍💻</div>Bạn đi lo business,<br><b>handover</b> cho 2 dev mới</div>
+  </div>
+  <div class="row mt mid jc" style="gap:30px">
+    <div class="paper frag" data-f="3" style="font-size:26px;max-width:880px">🧑‍💻 <b>Dev mới:</b> <i>"Anh ơi, lãi đang chia 365 hay 360? Sao chỗ này làm tròn lên? Em sửa có ảnh hưởng gì không?"</i></div>
+    <div class="box red frag" data-f="4" style="font-size:26px;width:470px">😶 Bạn: <i>"…AI chọn đấy."</i><br><b class="r">Chỉ có code. Không ai biết vì sao.</b></div>
+  </div>
+  <div class="box dash mt frag" data-f="5" style="font-size:24px">
+    <div class="row mid" style="gap:18px"><b style="white-space:nowrap">💸 Chi phí vòng đời phần mềm:</b>
+      <div class="grow" style="display:flex;height:42px;border:2.5px solid var(--ink);border-radius:8px;overflow:hidden;font-size:21px">
+        <div style="width:25%;background:var(--greenbg);display:flex;align-items:center;justify-content:center">Build</div>
+        <div style="width:75%;background:var(--redbg);display:flex;align-items:center;justify-content:center"><b>Operate &amp; Maintain</b> — nhiều năm</div></div></div>
+  </div>
+  <div class="chot frag" data-f="6">Code cho biết hệ thống <b>đang</b> làm gì. Không cho biết <b>đúng ra</b> phải làm gì.</div>
+<aside class="notes">§7a (26:00–30:00) Kể như câu chuyện: Tháng 1 → Tháng 6 → Tháng 7 → câu hỏi của dev mới → "AI chọn đấy" → chi phí vòng đời → câu chốt.
+Tỉ lệ Build/Operate là minh hoạ xu hướng phổ biến (bảo trì chiếm phần lớn TCO) — không nêu con số chính xác.</aside>
+</section>
+
+<section class="slide" data-title="Một ticket từ khách hàng" data-part="2. Phần chìm (15–35')">
+  <div class="secno">2/-</div>
+  <h1 class="t">Một <span class="r">ticket</span> từ khách hàng</h1>
+  <svg class="brush"><use href="#brush"/></svg>
+  <div class="paper mt center" style="font-size:30px">💬 <i>"Đặt hàng báo <b>thành công</b>, tôi có dùng mã giảm giá <b>XXXX</b>, nhưng <b>chưa nhận được hàng</b>."</i></div>
+  <div class="row mt mid frag" data-f="1" style="gap:16px;font-size:26px">
+    <div class="tag red" style="width:190px;text-align:center">❌ Vibe</div>
+    <div class="box red" style="padding:10px 20px"><code>&gt; fix lỗi khách báo</code></div><div style="font-size:34px">→</div>
+    <div class="box red alt" style="padding:10px 20px">deploy luôn</div><div style="font-size:34px">→</div>
+    <div style="font-size:44px">🙏</div>
+  </div>
+  <div class="row mt2" style="gap:16px;font-size:25px;align-items:stretch">
+    <div class="tag green frag" data-f="2" style="width:190px;text-align:center;align-self:flex-start;font-size:26px">✅ Thực tế</div>
+    <div class="box frag" data-f="2" style="flex:1"><h3>① Investigate</h3>
+      <ul class="clean" style="line-height:1.5"><li>• Triage ticket</li><li>• Đọc logs, tra đơn hàng</li><li>• <b>Root Cause</b>: voucher? payment? shipping?</li><li>• Reproduce lỗi</li></ul></div>
+    <div class="frag" data-f="3" style="align-self:center;font-size:40px">→</div>
+    <div class="box alt frag" data-f="3" style="flex:1"><h3>② Fix</h3>
+      <ul class="clean" style="line-height:1.5"><li>• <b class="hl">Đối chiếu spec</b>: đúng ra phải thế nào?</li><li>• Patch</li><li>• Unit + integration test</li></ul></div>
+    <div class="frag" data-f="4" style="align-self:center;font-size:40px">→</div>
+    <div class="box green frag" data-f="4" style="flex:1"><h3>③ Release</h3>
+      <ul class="clean" style="line-height:1.5"><li>• Staging → <b>UAT</b></li><li>• Data migration (sửa đơn sai)</li><li>• Deploy Production</li><li>• Monitor</li></ul></div>
+  </div>
+  <div class="chot frag" data-f="5">Không có spec, bạn <b>không biết đó là bug hay là feature</b>.</div>
+<aside class="notes">§7b (30:00–35:00) Đọc to ticket → Vibe (1 dòng) → Investigate → Fix (nhấn "đối chiếu spec") → Release → câu chốt, nói CHẬM.</aside>
+</section>
+
+<!-- 8 ─────────────────────────────────────────── -->
+<section class="slide" data-title="SDD Upstream" data-part="3. Spec-Driven Development (35–60')">
+  <div class="secno">3/-</div>
+  <h1 class="t" style="font-size:54px;padding:0 40px">Spec-Driven Development ① <span class="g">Định nghĩa đúng</span></h1>
+  <svg class="brush"><use href="#brush"/></svg>
+  <div class="box fill row mid" style="gap:16px;padding:10px 22px;margin-top:14px;font-size:27px"><span class="tag green" style="font-size:22px;white-space:nowrap;flex:none">Định nghĩa</span><div><b>Định nghĩa đúng</b> = hiểu &amp; <b>chốt</b> bài toán: làm gì, cho ai, theo luật nào, ràng buộc gì, <b>trước</b> khi viết dòng code đầu tiên. <span class="g mono" style="font-size:19px">(Upstream)</span></div></div>
+  <div class="row" style="margin-top:14px" style="gap:22px">
+    <div class="col grow" style="gap:9px">
+      <div class="box  row mid frag" data-f="1" style="gap:16px;padding:6px 18px">
+        <span class="num" style="flex:none">1</span><div style="font-size:40px;width:50px;text-align:center">📜</div>
+        <div style="width:300px;flex:none"><b style="font-size:26px">Hiến pháp dự án</b><br><span class="g mono" style="font-size:19px">Constitution</span></div>
+        <div class="grow"><div class="key">Nguyên tắc <b>không ai được vi phạm</b>, kể cả AI</div><div class="ex"><b>Ex:</b><span>Mọi phép tính tiền phải có test</span><span>Không để secret trong code</span><span>Dữ liệu khách không ra nước ngoài</span></div></div></div>
+      <div class="box alt row mid frag" data-f="2" style="gap:16px;padding:6px 18px">
+        <span class="num" style="flex:none">2</span><div style="font-size:40px;width:50px;text-align:center">🎯</div>
+        <div style="width:300px;flex:none"><b style="font-size:26px">Build cái gì, cho ai</b><br><span class="g mono" style="font-size:19px">What &amp; Why</span></div>
+        <div class="grow"><div class="key">Cái gì, cho ai, vì sao. <b>Chưa nói công nghệ</b></div><div class="ex"><b>Ex:</b><span>Nhà đầu tư xem lãi phải trả mỗi ngày</span><span>Cảnh báo khi giá cổ phiếu giảm</span></div></div></div>
+      <div class="box  row mid frag" data-f="3" style="gap:16px;padding:6px 18px">
+        <span class="num" style="flex:none">3</span><div style="font-size:40px;width:50px;text-align:center">🧭</div>
+        <div style="width:300px;flex:none"><b style="font-size:26px">Chưa biết thì hỏi</b><br><span class="g mono" style="font-size:19px">Clarify · FDE</span></div>
+        <div class="grow"><div class="key">Chỗ chưa rõ thì <b>đi hỏi</b>, không đoán</div><div class="ex"><b>Ex:</b><span>Cut-off mấy giờ?</span><span>Đáo hạn vào ngày lễ?</span><span>FDE ngồi cạnh chuyên viên tín dụng</span></div></div></div>
+      <div class="box alt row mid frag" data-f="4" style="gap:16px;padding:6px 18px">
+        <span class="num" style="flex:none">4</span><div style="font-size:40px;width:50px;text-align:center">🏗️</div>
+        <div style="width:300px;flex:none"><b style="font-size:26px">Thiết kế &amp; chọn công nghệ</b><br><span class="g mono" style="font-size:19px">Architecture &amp; Planning</span></div>
+        <div class="grow"><div class="key">Chọn theo <b>bối cảnh khách hàng</b>, không theo sở thích</div><div class="ex"><b>Ex:</b><span>Budget: dao mổ trâu giết ruồi?</span><span>Team khách chỉ biết PHP</span><span>GCP / AWS / on-premise</span><span>Microservice hay monolith</span></div></div></div>
+      <div class="box green row mid frag" data-f="5" style="gap:16px;padding:6px 18px">
+        <span class="num" style="flex:none">5</span><div style="font-size:40px;width:50px;text-align:center">✅</div>
+        <div style="width:300px;flex:none"><b style="font-size:26px">Kiểm tra spec</b><br><span class="g mono" style="font-size:19px">Validate Spec</span></div>
+        <div class="grow"><div class="key">SRS đủ chưa, mâu thuẫn gì? <b>Chốt rồi mới vào dev</b></div><div class="ex"><b>Ex:</b><span>Mọi yêu cầu đều testable</span><span>Không còn [NEEDS CLARIFICATION]</span></div></div></div>
+    </div>
+    <div class="paper frag" data-f="6" style="width:370px;font-size:21px;line-height:1.55;align-self:flex-end">
+      <b style="font-size:25px">📐 Upstream Deliverables</b><br>
+      <span class="key" style="font-size:21px">Requirements &amp; Basic Design phải <b class="r" style="color:var(--red)">sign-off</b> mới vào dev.</span>
+      <div style="margin-top:6px">
+      • System Architecture Diagram<br>
+      • Feature · Screen · Batch List<br>
+      • API Specification <span class="m">(OpenAPI)</span><br>
+      • ER Diagram · Table Definitions<br>
+      • Screen Design <span class="m">UI · fields · actions</span></div>
+      <div class="m" style="font-size:17px;margin-top:6px">SRS chuẩn: ISO/IEC/IEEE 29148</div>
+    </div>
+  </div>
+<aside class="notes">§9 (35:00–42:00) Quy trình KHÔNG phụ thuộc công cụ. Nhấn → từng bước 1→5, rồi ô Upstream Deliverables.
+Bước 4: kể chuyện khách chỉ biết PHP, khách bắt dùng AWS/GCP, khách không muốn lock-in cloud. Bước 3 + 4 đi cùng nhau.</aside>
+</section>
+
+<section class="slide" data-title="SDD Downstream" data-part="3. Spec-Driven Development (35–60')">
+  <div class="secno">3/-</div>
+  <h1 class="t" style="font-size:54px;padding:0 40px">Spec-Driven Development ② <span class="g">Chia việc &amp; làm</span></h1>
+  <svg class="brush"><use href="#brush"/></svg>
+  <div class="box fill row mid" style="gap:16px;padding:10px 22px;margin-top:14px;font-size:27px"><span class="tag green" style="font-size:22px;white-space:nowrap;flex:none">Định nghĩa</span><div><b>Chia việc &amp; làm</b> = biến spec đã chốt thành <b>task nhỏ</b>, làm <b>cuốn chiếu</b>, mỗi phần đều <b>đối chiếu lại spec</b>. <span class="g mono" style="font-size:19px">(Downstream)</span></div></div>
+  <div class="row" style="margin-top:14px" style="gap:24px">
+    <div class="col grow" style="gap:9px">
+      <div class="box  row mid frag" data-f="1" style="gap:16px;padding:6px 18px">
+        <span class="num" style="flex:none">6</span><div style="font-size:40px;width:50px;text-align:center">🧩</div>
+        <div style="width:300px;flex:none"><b style="font-size:26px">Chia việc, chia sprint</b><br><span class="g mono" style="font-size:19px">Tasks &amp; Sprint</span></div>
+        <div class="grow"><div class="key">Làm <b>cuốn chiếu</b>, không làm một cục</div><div class="ex"><b>Ex:</b><span>500 màn hình → 10 màn → feedback → sửa → 10 màn tiếp</span><span>AI hay "cơm" đều thế</span></div></div></div>
+      <div class="box alt row mid frag" data-f="2" style="gap:16px;padding:6px 18px">
+        <span class="num" style="flex:none">7</span><div style="font-size:40px;width:50px;text-align:center">🔍</div>
+        <div style="width:300px;flex:none"><b style="font-size:26px">Kế hoạch đã đủ chưa</b><br><span class="g mono" style="font-size:19px">Validate Plan · WBS</span></div>
+        <div class="grow"><div class="key">Danh sách task đã <b>phủ hết spec</b> chưa?</div><div class="ex"><b>Ex:</b><span>Master Schedule → WBS</span><span>Giao đúng role: BA · Designer · Dev · QA</span></div></div></div>
+      <div class="box  row mid frag" data-f="3" style="gap:16px;padding:6px 18px">
+        <span class="num" style="flex:none">8</span><div style="font-size:40px;width:50px;text-align:center">⚙️</div>
+        <div style="width:300px;flex:none"><b style="font-size:26px">Code &amp; test</b><br><span class="g mono" style="font-size:19px">Implement</span></div>
+        <div class="grow"><div class="key"><b>Đáy chữ V</b>: phần dễ nhất thời AI</div><div class="ex"><b>Ex:</b><span>Spec + task rõ → AI code &amp; test rất nhanh</span></div></div></div>
+      <div class="box green row mid frag" data-f="4" style="gap:16px;padding:6px 18px">
+        <span class="num" style="flex:none">↻</span><div style="font-size:40px;width:50px;text-align:center">🔁</div>
+        <div style="width:300px;flex:none"><b style="font-size:26px">Lặp mỗi ngày</b><br><span class="g mono" style="font-size:19px">Loop · Verify</span></div>
+        <div class="grow"><div class="key">Công việc hằng ngày, <b>đến khi WBS done</b></div><div class="ex"><b>Ex:</b><span>Nhận task → làm → đối chiếu spec → xong → task mới</span></div></div></div>
+    </div>
+  </div>
+  <div class="chot frag" data-f="5">Quy trình này <b>có từ trước AI</b>. AI không xoá nó, AI làm <b>phần code</b> nhanh hơn.</div>
+<aside class="notes">§10 (42:00–48:00) → 6 Tasks & Sprint (chuyện 500 màn hình) → 7 Validate Plan/WBS → 8 Implement → Loop → V-Model → câu chốt.</aside>
+</section>
+
+<section class="slide" data-title="SDD và V-Model" data-part="3. Spec-Driven Development (35–60')">
+  <div class="secno">3/-</div>
+  <h1 class="t" style="font-size:54px;padding:0 40px">Spec-Driven Development ③ <span class="g">nhìn qua V-Model</span></h1>
+  <svg class="brush"><use href="#brush"/></svg>
+  <div style="position:relative;height:470px;margin-top:6px">
+    <svg viewBox="0 0 1440 470" width="1440" height="470" style="position:absolute;left:0;top:0" class="sketch">
+      <defs><marker id="ahv" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#7a7468"/></marker></defs>
+      <path d="M330 20 L720 400 L1110 20" fill="none" stroke="#262626" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="610" y="372" text-anchor="end" font-family="Pangolin" font-size="23" fill="#3f6236">Define · viết spec ↘</text>
+      <text x="830" y="372" font-family="Pangolin" font-size="23" fill="#3f6236">↗ Verify · kiểm chứng</text>
+      <g class="frag" data-f="3"><path d="M381 60 H1059" stroke="#7a7468" stroke-width="2.5" stroke-dasharray="8 8" fill="none" marker-end="url(#ahv)"/></g><g class="frag" data-f="4"><path d="M494 170 H946" stroke="#7a7468" stroke-width="2.5" stroke-dasharray="8 8" fill="none" marker-end="url(#ahv)"/></g><g class="frag" data-f="5"><path d="M607 280 H833" stroke="#7a7468" stroke-width="2.5" stroke-dasharray="8 8" fill="none" marker-end="url(#ahv)"/></g>
+      <circle cx="720" cy="400" r="36" fill="#f6e08f" stroke="#262626" stroke-width="3"/>
+      <text x="720" y="408" text-anchor="middle" font-family="Pangolin" font-size="22" fill="#262626">Code</text>
+    </svg>
+    <div class="box frag" data-f="2" style="position:absolute;left:9px;top:20px;width:300px;padding:7px 14px;text-align:right"><b style="font-size:23px">Requirements · <span class="mono">spec.md</span></b><div style="font-size:17.5px;line-height:1.3">User Stories · Functional Requirements (FR) · Success Criteria (SC)</div></div><div class="box green alt frag" data-f="3" style="position:absolute;left:1131px;top:20px;width:300px;padding:7px 14px"><b style="font-size:23px">Acceptance Test</b><div style="font-size:17.5px;line-height:1.3">Given/When/Then · Success Criteria (SC) đạt chưa?</div></div><div class="box frag" data-f="4" style="position:absolute;left:122px;top:130px;width:300px;padding:7px 14px;text-align:right"><b style="font-size:23px">Basic Design · <span class="mono">plan.md</span></b><div style="font-size:17.5px;line-height:1.3">Architecture · Non-Functional Requirements (NFR)</div></div><div class="box green alt frag" data-f="4" style="position:absolute;left:1018px;top:130px;width:300px;padding:7px 14px"><b style="font-size:23px">System Test</b><div style="font-size:17.5px;line-height:1.3">E2E · load · security</div></div><div class="box frag" data-f="5" style="position:absolute;left:235px;top:240px;width:300px;padding:7px 14px;text-align:right"><b style="font-size:23px">Detailed Design</b><div style="font-size:17.5px;line-height:1.3"><span class="mono">contracts/</span> · <span class="mono">data-model.md</span></div></div><div class="box green alt frag" data-f="5" style="position:absolute;left:905px;top:240px;width:300px;padding:7px 14px"><b style="font-size:23px">Integration Test</b><div style="font-size:17.5px;line-height:1.3">Contract test với API</div></div>
+    <div class="frag" data-f="3" style="position:absolute;left:520px;top:22px;width:400px;text-align:center;font-size:19px;color:var(--mute)">test được thiết kế <b style="font-weight:400;color:var(--green)">ngay khi viết spec</b></div>
+    <div class="frag" data-f="1" style="position:absolute;left:770px;top:385px;font-size:20px">
+      <span class="mono">tasks.md → implement</span> + <b>Unit Test</b> <span class="g">⚡ AI làm nhanh nhất</span></div>
+  </div>
+  <div class="row" style="gap:18px;font-size:21px;margin-top:6px">
+    <div class="box frag" data-f="6" style="flex:1;padding:10px 16px"><b class="g">Giống:</b> mỗi tài liệu cánh trái có <b>1 tầng kiểm chứng</b> cánh phải. Functional Requirement FR-001 ↔ test của FR-001 <span class="m">(traceability)</span></div>
+    <div class="box alt frag" data-f="7" style="flex:1;padding:10px 16px"><b class="r">Khác:</b> V cổ điển chạy <b>1 lần</b> cho cả hệ thống. SDD chạy <b>"mini-V" cho từng feature</b>, lặp nhiều lần</div>
+    <div class="box green frag" data-f="8" style="flex:1;padding:10px 16px"><b class="g">Thời AI:</b> đáy chữ V gần như miễn phí → giá trị dồn về <b>2 cánh</b>: spec &amp; verify</div>
+  </div>
+<aside class="notes">§V-Model (≈4') Nhịp: đáy (Code) → Requirements ↔ Acceptance → "thiết kế test ngay khi viết spec" → Basic Design ↔ System Test → Detailed Design ↔ Integration → Giống → Khác → Thời AI.
+Nguồn: góc nhìn của người làm nghề (blog, dự án cộng đồng như Spec Kit V-Model Extension Pack), chưa phải chuẩn chính thức.</aside>
+</section>
+
+<section class="slide" data-title="Spec Kit = công cụ" data-part="3. Spec-Driven Development (35–60')">
+  <div class="secno">3/-</div>
+  <h1 class="t" style="font-size:54px;padding:0 40px"><span class="g">GitHub Spec Kit</span>: bộ công cụ cho quy trình đó</h1>
+  <svg class="brush"><use href="#brush"/></svg>
+  <table class="t mt" style="font-size:22px">
+    <tr><th style="width:24%">Bước SDD</th><th style="width:24%">Lệnh trong agent</th><th>Mẹo</th></tr>
+    <tr class="frag" data-f="1"><td><b>Constitution</b></td><td class="mono g">/speckit-constitution</td><td>Luật <b>thật sự đúng</b> với dự án, ngắn</td></tr><tr class="frag" data-f="2"><td><b>What &amp; Why</b></td><td class="mono g">/speckit-specify</td><td>Chưa nói tech stack. <i>"Nhà đầu tư xem lãi mỗi ngày…"</i></td></tr><tr class="frag" data-f="3"><td><b>Clarify</b></td><td class="mono r">/speckit-clarify</td><td>AI <b>đánh dấu</b> [NEEDS CLARIFICATION] thay vì đoán</td></tr><tr class="frag" data-f="4"><td><b>Architecture &amp; Planning</b></td><td class="mono g">/speckit-plan</td><td><b>Bây giờ</b> mới nói stack, API Contract, security</td></tr><tr class="frag" data-f="5"><td><b>Validate Spec</b></td><td class="mono r">/speckit-checklist</td><td>"Unit test" cho requirements: đã định nghĩa rounding chưa?</td></tr><tr class="frag" data-f="6"><td><b>Tasks &amp; Sprint</b></td><td class="mono g">/speckit-tasks</td><td>Chia theo <b>user story</b>, P1 chạy được trước</td></tr><tr class="frag" data-f="7"><td><b>Validate Plan</b></td><td class="mono r">/speckit-analyze</td><td>"Functional Requirement FR-004 chưa có task nào", soát <b>trước</b> khi code</td></tr><tr class="frag" data-f="8"><td><b>Implement</b></td><td class="mono g">/speckit-implement</td><td>Từng phase, <b>new session</b>, test trước</td></tr><tr class="frag" data-f="9"><td><b>Loop · Verify</b></td><td class="mono g">/speckit-converge</td><td>Đừng tin "Done ✅", đối chiếu spec, thiếu → thêm task</td></tr>
+  </table>
+  <div class="row mt jc" style="gap:18px;font-size:22px">
+    <div class="box red dash frag" data-f="10">🚧 <span class="r mono">đỏ</span> = <b>Quality Gate</b>, việc nhỏ có thể bỏ</div>
+    <div class="box dash alt frag" data-f="10">⚡ <b>Short path:</b> specify → plan → tasks → implement → converge</div>
+    <div class="box green frag" data-f="11">🧰 Không dùng Spec Kit? <b>Quy trình vẫn y nguyên.</b></div>
+  </div>
+<aside class="notes">§12 (52:00–55:00) Spec Kit (mã nguồn mở của GitHub) map 1-1 với quy trình vừa nói. Mỗi bước = 1 lệnh gõ trong chat của agent (Claude Code, Copilot, Codex…). Chạy từng lệnh một, review rồi mới đi tiếp — theo Spec Kit Quickstart.</aside>
+</section>
+
+<!-- 9 ─────────────────────────────────────────── -->
+<section class="slide" data-title="Giải phẫu spec" data-part="3. Spec-Driven Development (35–60')">
+  <div class="secno">3/-</div>
+  <h1 class="t"><span class="mono" style="font-size:.85em">spec.md</span>: phần chìm <span class="g">được viết ra</span></h1>
+  <svg class="brush"><use href="#brush"/></svg>
+  <div class="row mt" style="gap:26px">
+    <div class="paper mono grow" style="font-size:16.5px;line-height:1.5"># Feature Specification: Tính lãi khoản vay cầm cố
+<span class="frag" data-f="1">### User Story 1 - Xem lãi phải trả (Priority: P1)
+1. <b>Given</b> dư nợ 100.000.000đ, lãi 12%/năm,
+   <b>When</b> hết ngày 15/11,
+   <b>Then</b> lãi ngày = 32.876đ (làm tròn xuống)</span>
+<span class="frag" data-f="2">## Functional Requirements
+- <b>FR-001</b>: Lãi tính trên dư nợ cuối ngày,
+  day-count <b>Actual/365</b>
+- <b>FR-004</b>: Đáo hạn rơi vào ngày nghỉ → dời sang
+  ngày làm việc kế tiếp</span>
+<span class="frag" data-f="3">- <b>FR-007</b>: Giải ngân sau cut-off thì lãi tính từ
+  <span style="color:#b3332b">[NEEDS CLARIFICATION: cut-off mấy giờ?
+  tính từ T hay T+1?]</span></span>
+<span class="frag" data-f="4">## Success Criteria
+- <b>SC-001</b>: Lệch reconciliation với ngân hàng = 0đ</span>
+<span class="frag" data-f="4" style="font-family:var(--hand);font-size:19px;color:#7a7468;white-space:normal;display:block;margin-top:10px;border-top:1.5px dashed #d6cdb6;padding-top:6px"><b>FR</b> = Functional Requirement (yêu cầu chức năng) · <b>SC</b> = Success Criterion (tiêu chí thành công, đo được)</span></div>
+    <div class="col" style="width:540px;font-size:23px">
+      <table class="t" style="font-size:21px">
+        <tr><th class="r">❌ Mơ hồ</th><th class="g">✅ Testable</th></tr>
+        <tr class="frag" data-f="5"><td>"tính lãi hằng ngày"</td><td>dư nợ cuối ngày × lãi ÷ 365</td></tr>
+        <tr class="frag" data-f="6"><td>"làm tròn hợp lý"</td><td>làm tròn xuống đến đồng</td></tr>
+        <tr class="frag" data-f="7"><td>"chịu tải tốt"</td><td>≤ 50 request/giây vào Core Banking</td></tr>
+        <tr class="frag" data-f="8"><td>"bảo mật"</td><td>mọi request ký số, secret không nằm trong code</td></tr>
+      </table>
+      <div class="box red alt frag" data-f="3"><b class="r">[NEEDS CLARIFICATION]</b>: AI <b>đánh dấu</b> thay vì đoán. Người có nghiệp vụ trả lời.</div>
+    </div>
+  </div>
+  <div class="chot frag" data-f="9">Không viết được thành <b>automated test</b> → quy tắc đó chưa đủ rõ.</div>
+<aside class="notes">§12 (53:00–60:00) → User Story (Given/When/Then) → Functional Requirements (FR) → [NEEDS CLARIFICATION] → Success Criteria (SC) → bảng mơ hồ/testable (cho phòng đoán trước khi lật) → chốt. Số liệu MINH HOẠ.</aside>
+</section>
+
+<!-- 10 ─────────────────────────────────────────── -->
+
+
+<!-- 11 ─────────────────────────────────────────── -->
+<section class="slide" data-title="Repo mẫu" data-part="5. Repo mẫu + demo (60–78')">
+  <div class="secno">5/-</div>
+  <h1 class="t">🎁 Repo mẫu = <span class="g">Spec Kit</span> + 1 lớp "dẫn đường"</h1>
+  <svg class="brush"><use href="#brush"/></svg>
+  <div class="row mt" style="gap:26px">
+    <div class="paper mono" style="font-size:17.5px;width:700px"><span style="color:#999"># sinh bởi: specify init --integration claude</span>
+├── .specify/
+│   ├── memory/<b>constitution.md</b>  ← luật dự án
+│   ├── templates/  scripts/
+├── .claude/skills/speckit-*/     ← các skill Spec Kit
+├── specs/
+│   └── 001-tinh-lai/
+│       ├── <b>spec.md</b>      ← nghiệp vụ
+│       ├── <b>plan.md</b>      ← kỹ thuật
+│       ├── data-model.md · contracts/
+│       ├── <b>tasks.md</b>     ← việc theo story
+│       └── checklists/
+<span class="frag" data-f="1"><span style="color:#3f6236"># lớp dẫn đường (thêm cho người mới)</span>
+├── <b>AGENTS.md</b> · CLAUDE.md  ← "không spec → không code"
+├── <span style="color:#b3332b">spikes/</span>                  ← 🎸 vùng vibe
+└── docs/cheatsheet.md</span></div>
+    <table class="t grow" style="font-size:21px">
+      <tr><th>Bạn nói…</th><th>Agent chạy</th></tr>
+      <tr class="frag" data-f="2"><td>"mình muốn làm…", "code luôn đi"</td><td class="mono g">speckit-specify</td></tr>
+      <tr class="frag" data-f="3"><td>"còn gì chưa rõ?"</td><td class="mono g">speckit-clarify</td></tr>
+      <tr class="frag" data-f="4"><td>"dùng X hay Y?", "lên kế hoạch"</td><td class="mono g">speckit-plan</td></tr>
+      <tr class="frag" data-f="5"><td>"spec ổn chưa?"</td><td class="mono g">speckit-checklist</td></tr>
+      <tr class="frag" data-f="6"><td>"chia việc"</td><td class="mono g">speckit-tasks · analyze</td></tr>
+      <tr class="frag" data-f="7"><td>"làm đi"</td><td class="mono g">speckit-implement</td></tr>
+      <tr class="frag" data-f="8"><td>"xong chưa?"</td><td class="mono g">speckit-converge</td></tr>
+      <tr class="frag" data-f="9"><td>"thử nhanh…", "spike"</td><td class="mono r">spikes/ (không cần spec)</td></tr>
+    </table>
+  </div>
+  <div class="chot frag" data-f="20">Spec Kit = <b>quy trình chuẩn</b>. AGENTS.md = <b>người dẫn đường</b> cho ai chưa biết quy trình.</div>
+<aside class="notes">§11 (60:00–63:00) Mở repo trong editor.</aside>
+</section>
+
+<!-- 12 ─────────────────────────────────────────── -->
+<section class="slide" data-title="Demo 2" data-part="5. Repo mẫu + demo (60–78')">
+  <div class="secno">DEMO</div>
+  <h1 class="t">Live demo · <span class="g">tính lãi cầm cố</span> theo Spec Kit</h1>
+  <svg class="brush"><use href="#brush"/></svg>
+  <div class="row mt" style="gap:26px">
+    <pre class="code" style="font-size:19px;width:900px"><span class="c">&gt; làm app cầm cố cổ phiếu vay tiền, tính lãi
+  hằng ngày, code luôn đi</span>
+<span class="c">#   → AGENTS.md: chưa có spec → chạy specify</span>
+<span class="y">/speckit-specify</span> Tính lãi hằng ngày cho khoản vay
+  cầm cố cổ phiếu …
+<span class="y">/speckit-clarify</span>
+<span class="c">#   → AI hỏi: 365 hay 360? cut-off? ngày lễ? làm tròn?</span>
+<span class="y">/speckit-plan</span> TypeScript, module tính lãi thuần,
+  không gọi API thật; test bằng Vitest.
+<span class="y">/speckit-tasks</span>   <span class="y">/speckit-analyze</span>
+<span class="c"># ── phiên mới ──</span>
+<span class="y">/speckit-implement</span> Chỉ User Story 1
+<span class="y">/speckit-converge</span></pre>
+    <div class="col grow" style="font-size:23px">
+      <div class="box green frag" data-f="1"><b>A → C</b> (~8') <code>demo-fresh</code>: specify · clarify · plan</div>
+      <div class="box alt frag" data-f="2"><b>D → E</b> (~6') <code>demo-progress</code>: implement · converge</div>
+      <div class="box red frag" data-f="1">🎯 Xem kỹ <b>câu hỏi của clarify</b> = phần chìm của tảng băng hiện lên</div>
+      <div class="box dash alt frag" data-f="3" style="font-size:21px">🛟 Dự phòng: <code>specs/001-*</code> đã sinh sẵn lúc chuẩn bị</div>
+    </div>
+  </div>
+<aside class="notes">§12 (63:00–78:00) LIVE DEMO CHÍNH theo kịch bản §12.</aside>
+</section>
+
+<!-- 13 ─────────────────────────────────────────── -->
+<section class="slide" data-title="Khi nào vibe, khi nào spec" data-part="6. Kết (78–90')">
+  <div class="secno">6/-</div>
+  <h1 class="t">Khi nào <span class="r">vibe</span>, khi nào <span class="g">spec</span>?</h1>
+  <svg class="brush"><use href="#brush"/></svg>
+  <div class="row mt2" style="gap:30px">
+    <div class="box red grow frag" data-f="1"><div class="tag red">🎸 Vibe là đủ</div>
+      <ul class="clean mt" style="font-size:28px"><li>• Sai cũng không ai mất gì</li><li>• Dùng xong có thể vứt</li><li>• Chỉ mình bạn dùng / sửa</li><li>• Không nối với hệ thống khác</li></ul></div>
+    <div class="box green alt grow frag" data-f="2"><div class="tag green">📐 Cần spec</div>
+      <ul class="clean mt" style="font-size:28px"><li>• Có <b>tiền / dữ liệu thật</b></li><li>• Có <b>quy tắc nghiệp vụ</b> phải đúng 100%</li><li>• <b>Nối</b> với hệ thống khác</li><li>• Sẽ có <b>người khác</b> tiếp quản, vận hành</li></ul></div>
+  </div>
+  <div class="box dash mt2 center frag" data-f="3" style="font-size:31px">🧪 <b>"Khi khách hàng báo lỗi, mình có biết hệ thống <u>đúng ra</u> phải làm gì không?"</b><br><span class="m">Không → cần spec.</span></div>
+<aside class="notes">§13 (78:00–81:00) Slide mang về số 1 — cho chụp ảnh.</aside>
+</section>
+
+<!-- 14 ─────────────────────────────────────────── -->
+<section class="slide" data-title="3 điều mang về" data-part="6. Kết (78–90')">
+  <h1 class="t">3 điều mang về</h1>
+  <svg class="brush"><use href="#brush"/></svg>
+  <div class="col mt" style="gap:22px;font-size:38px;max-width:1300px;margin:30px auto 0">
+    <div class="box row mid frag" style="gap:24px"><span class="num" style="width:62px;height:62px;font-size:34px">1</span><div>Vibe để <span class="r">học nhanh</span>. Spec để <span class="g">xây chắc</span>.</div></div>
+    <div class="box alt row mid frag" style="gap:24px"><span class="num" style="width:62px;height:62px;font-size:34px">2</span><div>AI làm <b>phần nổi</b>. Kỹ sư nhìn thấy <span class="hl">phần chìm</span>.</div></div>
+    <div class="box green row mid frag" style="gap:24px"><span class="num" style="width:62px;height:62px;font-size:34px">3</span><div>AI viết code. <b>Bạn</b> định nghĩa đúng &amp; chịu trách nhiệm.</div></div>
+  </div>
+  <div class="box dash mt center frag" style="font-size:26px">🗓️ <b>Thử thách 7 ngày:</b> lấy 1 dự án vibe cũ → <code>specify init --here</code> → làm lại 1 feature đủ các bước Spec Kit → đổi 1 quy tắc, xem có vỡ không.</div>
+  <div class="chot big">Code nhanh là kỹ năng. <b>Code đúng là nghề.</b></div>
+<aside class="notes">§14 (81:00–84:00) Chậm lại. Trả lời câu hỏi treo ở slide 2: CÓ — vẫn cần kỹ sư, nhưng là kỹ sư nhìn thấy phần chìm.</aside>
+</section>
+
+<!-- 15 ─────────────────────────────────────────── -->
+<section class="slide" data-title="Q&A" data-part="6. Kết (78–90')">
+  <div class="row mid" style="height:100%;gap:60px">
+    <div class="grow">
+      <h1 style="font-family:var(--title);font-size:110px;line-height:1">Q &amp; A</h1>
+      <svg class="brush" style="margin:10px 0;width:60%"><use href="#brush"/></svg>
+      <p style="font-size:34px">Câu hỏi khó nhất của bạn về vibe / spec / AI là gì?</p>
+      <div class="box mt2" style="font-size:26px">
+        🎁 Repo &amp; slide:<br><b class="mono" style="font-size:24px">github.com/dzungtri/vibe2specdriven</b><br>
+        🌐 dzungtri.github.io · facebook.com/dzungntnew
+      </div>
+    </div>
+    <div class="col mid" style="width:420px">
+      <div class="box center" style="width:360px;font-size:24px;padding:24px">📽️ Xem lại slide:<br><b class="mono" style="font-size:19px">dzungtri.github.io/<br>vibe2specdriven</b></div>
+      <div class="sketch"><svg width="160" height="170"><use href="#robot"/></svg></div>
+    </div>
+  </div>
+<aside class="notes">§15 (84:00–90:00) Q&A — xem bảng câu hỏi trong kịch bản. </aside>
+</section>
+
+
+</div><!-- /stage -->
+
+<div id="bar"></div><div id="pg"></div>
+<div id="help">← → chuyển · O tổng quan · N ghi chú · P presenter · F toàn màn hình</div>
+<div id="notes-ov"></div>
+
+<!-- Presenter view -->
+<div id="pv">
+  <div style="display:flex;flex-direction:column;gap:12px;min-height:0">
+    <div class="cur" id="pv-cur"></div>
+    <div class="nxt" id="pv-nxt"></div>
+    <div class="nt" id="pv-nt" style="flex:1"></div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div><span class="clock" id="pv-timer">00:00</span> <span style="color:#888;font-size:22px" id="pv-clock"></span></div>
+    <div><button id="pv-prev">← Trước</button><button id="pv-next">Sau →</button><button id="pv-reset">⟲ Đồng hồ</button></div>
+    <div class="plan" id="pv-plan"></div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const slides = [...document.querySelectorAll('.slide')];
+  const stage = document.getElementById('stage');
+  const bar = document.getElementById('bar'), pg = document.getElementById('pg');
+  const notesOv = document.getElementById('notes-ov');
+  const isPresenter = new URLSearchParams(location.search).has('presenter');
+  const ch = 'BroadcastChannel' in window ? new BroadcastChannel('vibe2spec') : null;
+  let cur = 0, frag = 0;
+
+  const fit = () => {
+    const s = Math.min(innerWidth / 1600, innerHeight / 900);
+    stage.style.transform = `scale(${s}) translate(-50%,-50%)`;
+    stage.style.transformOrigin = '0 0';
+    stage.style.left = '50%'; stage.style.top = '50%';
+    stage.style.transform = `translate(-50%,-50%) scale(${s})`;
+    stage.style.transformOrigin = 'center center';
+  };
+  const frags = i => [...slides[i].querySelectorAll('.frag')];
+  // Nhóm theo data-f (cùng số = hiện cùng lúc); không có data-f → mỗi phần tử 1 bước theo thứ tự DOM
+  const keyOf = (el, k) => (el.dataset.f !== undefined ? +el.dataset.f : 1000 + k);
+  const stepKeys = i => [...new Set(frags(i).map(keyOf))].sort((a, b) => a - b);
+  const noteOf = i => (slides[i].querySelector('aside.notes')?.textContent || '').trim();
+
+  function show(i, f = 0, broadcast = true) {
+    cur = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach((s, k) => s.classList.toggle('active', k === cur));
+    const fs = frags(cur), keys = stepKeys(cur); frag = f < 0 ? keys.length : Math.min(f, keys.length);
+    fs.forEach((el, k) => el.classList.toggle('on', keys.indexOf(keyOf(el, k)) < frag));
+    bar.style.width = ((cur + 1) / slides.length * 100) + '%';
+    pg.textContent = `${cur + 1} / ${slides.length}`;
+    notesOv.textContent = noteOf(cur);
+    if (!isPresenter) history.replaceState(null, '', '#' + (cur + 1));
+    if (broadcast && ch) ch.postMessage({ cur, frag });
+    if (isPresenter) renderPresenter();
+  }
+  const next = () => { if (frag < stepKeys(cur).length) show(cur, frag + 1); else show(cur + 1, 0); };
+  const prev = () => { if (frag > 0) show(cur, frag - 1); else show(cur - 1, -1); };
+
+  // overview
+  const toggleOverview = () => document.body.classList.toggle('overview');
+  slides.forEach((s, k) => s.addEventListener('click', () => {
+    if (document.body.classList.contains('overview')) { document.body.classList.remove('overview'); show(k, 0); }
+  }));
+
+  addEventListener('keydown', e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const k = e.key;
+    if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(k)) { e.preventDefault(); next(); }
+    else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(k)) { e.preventDefault(); prev(); }
+    else if (k === 'Home') show(0); else if (k === 'End') show(slides.length - 1);
+    else if (k === 'o' || k === 'O' || k === 'Escape') toggleOverview();
+    else if (k === 'n' || k === 'N') notesOv.style.display = notesOv.style.display === 'block' ? 'none' : 'block';
+    else if (k === 'p' || k === 'P') window.open(location.pathname + '?presenter#' + (cur + 1), 'presenter', 'width=1200,height=760');
+    else if (k === 'f' || k === 'F') document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+    else if (k === 'h' || k === 'H') { const h = document.getElementById('help'); h.style.display = h.style.display === 'none' ? '' : 'none'; }
+  });
+  let tx = null;
+  addEventListener('touchstart', e => tx = e.touches[0].clientX, { passive: true });
+  addEventListener('touchend', e => { if (tx === null) return; const d = e.changedTouches[0].clientX - tx; if (Math.abs(d) > 50) d < 0 ? next() : prev(); tx = null; });
+
+  if (ch) ch.onmessage = ({ data }) => { if (typeof data.cur === 'number') show(data.cur, data.frag, false); };
+
+  // presenter
+  let t0 = Date.now();
+  function renderPresenter() {
+    const s = slides[cur];
+    document.getElementById('pv-cur').textContent = `▶ ${cur + 1}/${slides.length} · ${s.dataset.part || ''} · ${s.dataset.title || ''}` + (stepKeys(cur).length ? `  [${frag}/${stepKeys(cur).length}]` : '');
+    const n = slides[cur + 1];
+    document.getElementById('pv-nxt').textContent = n ? `Tiếp: ${n.dataset.title}` : 'Hết';
+    document.getElementById('pv-nt').textContent = noteOf(cur);
+    const parts = {}; slides.forEach((x, k) => { const p = x.dataset.part; parts[p] = parts[p] || []; parts[p].push(k + 1); });
+    document.getElementById('pv-plan').innerHTML = Object.entries(parts).map(([p, ks]) =>
+      (ks.includes(cur + 1) ? `<b>▸ ${p}</b>` : p) + ` <span style="opacity:.6">(slide ${ks[0]}–${ks[ks.length - 1]})</span>`).join('<br>');
+  }
+  if (isPresenter) {
+    document.body.classList.add('presenter');
+    document.getElementById('pv-prev').onclick = prev;
+    document.getElementById('pv-next').onclick = next;
+    document.getElementById('pv-reset').onclick = () => t0 = Date.now();
+    setInterval(() => {
+      const s = Math.floor((Date.now() - t0) / 1000);
+      document.getElementById('pv-timer').textContent = `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+      document.getElementById('pv-clock').textContent = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+    }, 1000);
+  }
+
+  addEventListener('resize', fit); fit();
+  show((parseInt(location.hash.slice(1)) || 1) - 1, /[?&]all/.test(location.search) ? -1 : 0, false);
+})();
+</script>
+</body>
+</html>
