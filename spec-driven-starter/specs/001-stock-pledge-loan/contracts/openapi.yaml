@@ -1,0 +1,371 @@
+openapi: 3.1.0
+info:
+  title: Stock Pledge Loan API
+  version: 0.1.0
+  description: |
+    API dùng chung cho web (khách + nhân viên) và mobile (khách). Nguồn: specs/001-stock-pledge-loan/spec.md.
+    - Tiền: chuỗi số nguyên VND (vd "10000000") để không mất chính xác.
+    - Ngày nghiệp vụ: "YYYY-MM-DD" theo Asia/Ho_Chi_Minh.
+    - Xác thực: cookie `session` (web) hoặc `Authorization: Bearer <token>` (mobile).
+servers:
+  - url: /api/v1
+security:
+  - cookieAuth: []
+  - bearerAuth: []
+
+paths:
+  /auth/register:
+    post:
+      summary: Khách tự đăng ký (FR-000, FR-014). Gửi OTP xác minh email.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string, minLength: 8, maxLength: 128 }
+      responses:
+        "202": { description: OTP đã gửi, content: { application/json: { schema: { $ref: "#/components/schemas/OtpChallenge" } } } }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "409": { description: Email đã được dùng (EMAIL_TAKEN), content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+        "503": { $ref: "#/components/responses/EmailUnavailable" }
+
+  /auth/login:
+    post:
+      summary: Bước 1. Kiểm tra email + mật khẩu, gửi OTP (FR-014).
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string }
+      responses:
+        "202": { description: OTP đã gửi, content: { application/json: { schema: { $ref: "#/components/schemas/OtpChallenge" } } } }
+        "401": { description: Sai email hoặc mật khẩu (INVALID_CREDENTIALS; cùng thông báo cho cả 2 trường hợp), content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+        "503": { $ref: "#/components/responses/EmailUnavailable" }
+
+  /auth/otp/verify:
+    post:
+      summary: Bước 2. Xác minh OTP (đăng nhập hoặc xác minh email) và tạo phiên.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [challengeId, code]
+              properties:
+                challengeId: { type: string, format: uuid }
+                code: { type: string, pattern: "^[0-9]{6}$" }
+                client: { type: string, enum: [web, mobile], default: web }
+      responses:
+        "200":
+          description: Thành công. Web nhận cookie qua Set-Cookie; mobile nhận token trong body.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [user]
+                properties:
+                  user: { $ref: "#/components/schemas/Me" }
+                  token: { type: string, description: Chỉ trả khi client=mobile }
+        "400": { description: "OTP sai (OTP_INVALID, kèm attemptsLeft), hết hạn (OTP_EXPIRED) hoặc bị huỷ do sai 5 lần (OTP_LOCKED)", content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+
+  /auth/otp/resend:
+    post:
+      summary: Gửi lại OTP (FR-015, sau ít nhất 60 giây).
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [challengeId]
+              properties:
+                challengeId: { type: string, format: uuid }
+      responses:
+        "202": { description: Đã gửi lại, content: { application/json: { schema: { $ref: "#/components/schemas/OtpChallenge" } } } }
+        "429": { description: Chưa đủ 60 giây (OTP_RESEND_TOO_SOON, kèm retryAfterSeconds), content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+        "503": { $ref: "#/components/responses/EmailUnavailable" }
+
+  /auth/logout:
+    post:
+      summary: Huỷ phiên hiện tại.
+      responses:
+        "204": { description: Đã đăng xuất }
+
+  /me:
+    get:
+      summary: Thông tin tài khoản đang đăng nhập.
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/Me" } } } }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /loans:
+    post:
+      summary: Khách gửi yêu cầu vay (FR-001, FR-002, FR-003). Chỉ CUSTOMER đã xác minh email.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/LoanRequestInput" }
+      responses:
+        "201": { description: Tạo ở trạng thái PENDING, content: { application/json: { schema: { $ref: "#/components/schemas/Loan" } } } }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "422": { description: Vượt hạn mức (OVER_LIMIT, kèm maxPrincipal) hoặc mã chưa có giá (NO_PRICE, kèm symbol), content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+    get:
+      summary: Danh sách khoản vay. CUSTOMER chỉ thấy của mình; STAFF thấy tất cả (FR-010).
+      parameters:
+        - { name: status, in: query, schema: { type: string, enum: [PENDING, REJECTED, ACTIVE, SETTLED, WARNING] } }
+        - { name: cursor, in: query, schema: { type: string } }
+        - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items: { type: array, items: { $ref: "#/components/schemas/LoanSummary" } }
+                  nextCursor: { type: [string, "null"] }
+
+  /loans/{loanId}:
+    get:
+      summary: Chi tiết khoản vay. Khách chỉ xem được khoản của mình (FR-013), sai thì trả 404.
+      parameters: [ { $ref: "#/components/parameters/LoanId" } ]
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/Loan" } } } }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /loans/{loanId}/interest:
+    get:
+      summary: Lãi cộng dồn đến ngày chọn (FR-005, FR-006). Chỉ dùng cho khoản ACTIVE.
+      parameters:
+        - { $ref: "#/components/parameters/LoanId" }
+        - { name: asOf, in: query, description: "Mặc định là hôm nay", schema: { type: string, format: date } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/InterestQuote" } } } }
+        "400": { description: asOf trước ngày giải ngân (AS_OF_BEFORE_DISBURSEMENT), content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409": { $ref: "#/components/responses/InvalidState" }
+
+  /loans/{loanId}/approve:
+    post:
+      summary: Nhân viên duyệt (FR-001a). Kiểm tra lại hạn mức theo giá hiện tại.
+      parameters: [ { $ref: "#/components/parameters/LoanId" } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [annualRatePercent, disbursementDate]
+              properties:
+                annualRatePercent: { type: string, pattern: "^[0-9]{1,2}(\\.[0-9]{1,2})?$", description: "Lớn hơn 0 và không vượt 20 (FR-004)" }
+                disbursementDate: { type: string, format: date, description: Không ở tương lai }
+      responses:
+        "200": { description: Đã chuyển sang ACTIVE, content: { application/json: { schema: { $ref: "#/components/schemas/Loan" } } } }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "409": { $ref: "#/components/responses/InvalidState" }
+        "422": { description: Vượt hạn mức theo giá hiện tại (OVER_LIMIT), content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+
+  /loans/{loanId}/reject:
+    post:
+      summary: Nhân viên từ chối (FR-001a).
+      parameters: [ { $ref: "#/components/parameters/LoanId" } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason: { type: string, minLength: 1, maxLength: 500 }
+      responses:
+        "200": { description: Đã chuyển sang REJECTED, content: { application/json: { schema: { $ref: "#/components/schemas/Loan" } } } }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "409": { $ref: "#/components/responses/InvalidState" }
+
+  /loans/{loanId}/settle:
+    post:
+      summary: Nhân viên tất toán (FR-007).
+      parameters: [ { $ref: "#/components/parameters/LoanId" } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [settledDate, amountReceived]
+              properties:
+                settledDate: { type: string, format: date }
+                amountReceived: { $ref: "#/components/schemas/Money" }
+      responses:
+        "200": { description: Đã chuyển sang SETTLED, cổ phiếu RELEASED, content: { application/json: { schema: { $ref: "#/components/schemas/Loan" } } } }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "409": { $ref: "#/components/responses/InvalidState" }
+        "422": { description: Thu thiếu (INSUFFICIENT_AMOUNT, kèm shortfall), content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+
+  /stock-prices:
+    get:
+      summary: Danh sách giá tham chiếu (mọi người dùng đã đăng nhập).
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/StockPrice" } }
+    put:
+      summary: Nhân viên cập nhật giá cho một hoặc nhiều mã (FR-008).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              minItems: 1
+              maxItems: 500
+              items:
+                type: object
+                required: [symbol, price]
+                properties:
+                  symbol: { $ref: "#/components/schemas/Symbol" }
+                  price: { $ref: "#/components/schemas/Money" }
+      responses:
+        "200": { description: Đã lưu, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/StockPrice" } } } } }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+
+components:
+  securitySchemes:
+    cookieAuth: { type: apiKey, in: cookie, name: session }
+    bearerAuth: { type: http, scheme: bearer }
+
+  parameters:
+    LoanId: { name: loanId, in: path, required: true, schema: { type: string, format: uuid } }
+
+  schemas:
+    Money: { type: string, pattern: "^[0-9]{1,15}$", description: Số nguyên VND dạng chuỗi }
+    Symbol: { type: string, pattern: "^[A-Z0-9]{3}$" }
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code: { type: string }
+        message: { type: string, description: Thông báo tiếng Việt cho người dùng }
+        field: { type: string, description: Trường bị lỗi, nếu có }
+        details: { type: object }
+    OtpChallenge:
+      type: object
+      required: [challengeId, expiresAt, resendAfterSeconds]
+      properties:
+        challengeId: { type: string, format: uuid }
+        expiresAt: { type: string, format: date-time }
+        resendAfterSeconds: { type: integer }
+    Me:
+      type: object
+      required: [id, email, role, emailVerified]
+      properties:
+        id: { type: string, format: uuid }
+        email: { type: string }
+        role: { type: string, enum: [CUSTOMER, STAFF] }
+        emailVerified: { type: boolean }
+    LoanRequestInput:
+      type: object
+      required: [borrower, stocks, principal]
+      properties:
+        borrower:
+          type: object
+          required: [fullName, idNumber, phone]
+          properties:
+            fullName: { type: string, minLength: 1, maxLength: 100 }
+            idNumber: { type: string, pattern: "^[0-9]{9,12}$" }
+            phone: { type: string, pattern: "^0[0-9]{9}$" }
+        stocks:
+          type: array
+          minItems: 1
+          maxItems: 20
+          items:
+            type: object
+            required: [symbol, quantity]
+            properties:
+              symbol: { $ref: "#/components/schemas/Symbol" }
+              quantity: { type: string, pattern: "^[1-9][0-9]{0,11}$" }
+        principal: { $ref: "#/components/schemas/Money" }
+    PledgedStock:
+      type: object
+      required: [symbol, quantity, price, value, status]
+      properties:
+        symbol: { $ref: "#/components/schemas/Symbol" }
+        quantity: { type: string }
+        price: { $ref: "#/components/schemas/Money" }
+        value: { $ref: "#/components/schemas/Money" }
+        status: { type: string, enum: [PLEDGED, RELEASED] }
+    LoanSummary:
+      type: object
+      required: [id, borrowerName, principal, status, collateralValue, warning]
+      properties:
+        id: { type: string, format: uuid }
+        borrowerName: { type: string }
+        principal: { $ref: "#/components/schemas/Money" }
+        status: { type: string, enum: [PENDING, REJECTED, ACTIVE, SETTLED] }
+        collateralValue: { $ref: "#/components/schemas/Money" }
+        debtToCollateralPercent: { type: [string, "null"], description: "Chỉ để hiển thị, 2 chữ số thập phân" }
+        warning: { type: boolean, description: "Chỉ true khi ACTIVE và dư nợ ≥ 70% tài sản" }
+    Loan:
+      allOf:
+        - $ref: "#/components/schemas/LoanSummary"
+        - type: object
+          properties:
+            stocks: { type: array, items: { $ref: "#/components/schemas/PledgedStock" } }
+            maxPrincipal: { $ref: "#/components/schemas/Money" }
+            annualRateBp: { type: [integer, "null"] }
+            disbursementDate: { type: [string, "null"], format: date }
+            rejectReason: { type: [string, "null"] }
+            settlement:
+              type: [object, "null"]
+              properties:
+                settledDate: { type: string, format: date }
+                principal: { $ref: "#/components/schemas/Money" }
+                interest: { $ref: "#/components/schemas/Money" }
+                amountReceived: { $ref: "#/components/schemas/Money" }
+    InterestQuote:
+      type: object
+      required: [asOf, days, dailyInterest, accruedInterest, totalPayable]
+      properties:
+        asOf: { type: string, format: date }
+        days: { type: integer }
+        dailyInterest: { $ref: "#/components/schemas/Money" }
+        accruedInterest: { $ref: "#/components/schemas/Money" }
+        totalPayable: { $ref: "#/components/schemas/Money" }
+    StockPrice:
+      type: object
+      required: [symbol, price, updatedAt]
+      properties:
+        symbol: { $ref: "#/components/schemas/Symbol" }
+        price: { $ref: "#/components/schemas/Money" }
+        updatedAt: { type: string, format: date-time }
+
+  responses:
+    ValidationError: { description: Dữ liệu không hợp lệ (VALIDATION_ERROR, kèm field), content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+    Unauthorized: { description: Chưa đăng nhập (UNAUTHENTICATED), content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+    Forbidden: { description: Sai vai trò hoặc chưa xác minh email (FORBIDDEN / EMAIL_NOT_VERIFIED), content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+    NotFound: { description: Không tồn tại hoặc không thuộc quyền xem (NOT_FOUND), content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+    InvalidState: { description: Trạng thái khoản vay không cho phép thao tác này (INVALID_STATE), content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+    EmailUnavailable: { description: Không gửi được email OTP (EMAIL_UNAVAILABLE), xem contracts/email-otp.md, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
