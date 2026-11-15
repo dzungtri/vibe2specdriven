@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 1000" width="1800" height="1000"><defs>
+<marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#64748b"/></marker>
+<marker id="arrs" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M10 0L0 5L10 10z" fill="#64748b"/></marker>
+<filter id="sh" x="-5%" y="-5%" width="110%" height="120%"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#0f172a" flood-opacity=".10"/></filter>
+</defs><rect x="0" y="0" width="1800" height="1000" rx="0" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" />
+<rect x="0" y="0" width="1800" height="74" rx="0" fill="#1e293b" stroke="none" stroke-width="1.5" />
+<text x="28" y="33" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" font-weight="600" fill="#93c5fd" text-anchor="start" style="white-space:pre">PledgeLend Platform  ·  API-007</text>
+<text x="28" y="60" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#fff" text-anchor="start" style="white-space:pre">API Specification — Loans v2 (OpenAPI 3.1)</text>
+<text x="1180" y="32" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10.5" font-weight="600" fill="#94a3b8" text-anchor="start" style="white-space:pre">VERSION</text>
+<text x="1180" y="55" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="600" fill="#fff" text-anchor="start" style="white-space:pre">1.3</text>
+<text x="1330" y="32" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10.5" font-weight="600" fill="#94a3b8" text-anchor="start" style="white-space:pre">STATUS</text>
+<text x="1330" y="55" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="600" fill="#86efac" text-anchor="start" style="white-space:pre">Approved</text>
+<text x="1480" y="32" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10.5" font-weight="600" fill="#94a3b8" text-anchor="start" style="white-space:pre">OWNER</text>
+<text x="1480" y="55" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="600" fill="#fff" text-anchor="start" style="white-space:pre">Architecture Team</text>
+<text x="1630" y="32" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10.5" font-weight="600" fill="#94a3b8" text-anchor="start" style="white-space:pre">UPDATED</text>
+<text x="1630" y="55" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="600" fill="#fff" text-anchor="start" style="white-space:pre">2026-11-12</text>
+<text x="28" y="102" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#64748b" text-anchor="start" style="white-space:pre" font-style="italic">Contract between Investor App ⇄ PledgeLend ⇄ Core Banking · breaking changes require new major version</text>
+<text x="1776" y="986" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#94a3b8" text-anchor="end" style="white-space:pre">Illustrative example for training — not a real system</text>
+<rect x="24" y="130" width="470" height="846" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="44" y="162" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1e293b" text-anchor="start" style="white-space:pre">Endpoints</text>
+<rect x="40" y="186" width="438" height="62" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6" />
+<rect x="52" y="198" width="56" height="22" rx="5" fill="#2563eb" stroke="none" stroke-width="1.5" />
+<text x="80" y="214" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#fff" text-anchor="middle" style="white-space:pre">POST</text>
+<text x="118" y="214" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="600" fill="#1e293b" text-anchor="start" style="white-space:pre">/v2/loans</text>
+<text x="118" y="236" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#64748b" text-anchor="start" style="white-space:pre">Create loan request</text>
+<rect x="40" y="260" width="438" height="62" rx="8" fill="#fff" stroke="#cbd5e1" stroke-width="1" />
+<rect x="52" y="272" width="56" height="22" rx="5" fill="#16a34a" stroke="none" stroke-width="1.5" />
+<text x="80" y="288" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#fff" text-anchor="middle" style="white-space:pre">GET</text>
+<text x="118" y="288" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="600" fill="#1e293b" text-anchor="start" style="white-space:pre">/v2/loans/{loanId}</text>
+<text x="118" y="310" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#64748b" text-anchor="start" style="white-space:pre">Get loan detail</text>
+<rect x="40" y="334" width="438" height="62" rx="8" fill="#fff" stroke="#cbd5e1" stroke-width="1" />
+<rect x="52" y="346" width="56" height="22" rx="5" fill="#16a34a" stroke="none" stroke-width="1.5" />
+<text x="80" y="362" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#fff" text-anchor="middle" style="white-space:pre">GET</text>
+<text x="118" y="362" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="600" fill="#1e293b" text-anchor="start" style="white-space:pre">/v2/loans/{loanId}/accruals</text>
+<text x="118" y="384" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#64748b" text-anchor="start" style="white-space:pre">Daily interest history</text>
+<rect x="40" y="408" width="438" height="62" rx="8" fill="#fff" stroke="#cbd5e1" stroke-width="1" />
+<rect x="52" y="420" width="56" height="22" rx="5" fill="#2563eb" stroke="none" stroke-width="1.5" />
+<text x="80" y="436" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#fff" text-anchor="middle" style="white-space:pre">POST</text>
+<text x="118" y="436" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="600" fill="#1e293b" text-anchor="start" style="white-space:pre">/v2/loans/{loanId}/repayments</text>
+<text x="118" y="458" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#64748b" text-anchor="start" style="white-space:pre">Repay (partial / full)</text>
+<rect x="40" y="482" width="438" height="62" rx="8" fill="#fff" stroke="#cbd5e1" stroke-width="1" />
+<rect x="52" y="494" width="56" height="22" rx="5" fill="#2563eb" stroke="none" stroke-width="1.5" />
+<text x="80" y="510" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#fff" text-anchor="middle" style="white-space:pre">POST</text>
+<text x="118" y="510" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="600" fill="#1e293b" text-anchor="start" style="white-space:pre">/v2/loans/{loanId}/pledges</text>
+<text x="118" y="532" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#64748b" text-anchor="start" style="white-space:pre">Add collateral</text>
+<rect x="40" y="556" width="438" height="62" rx="8" fill="#fff" stroke="#cbd5e1" stroke-width="1" />
+<rect x="52" y="568" width="56" height="22" rx="5" fill="#16a34a" stroke="none" stroke-width="1.5" />
+<text x="80" y="584" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#fff" text-anchor="middle" style="white-space:pre">GET</text>
+<text x="118" y="584" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="600" fill="#1e293b" text-anchor="start" style="white-space:pre">/v2/securities/eligible</text>
+<text x="118" y="606" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#64748b" text-anchor="start" style="white-space:pre">Eligible symbols &amp; LTV</text>
+<rect x="40" y="630" width="438" height="62" rx="8" fill="#fff" stroke="#cbd5e1" stroke-width="1" />
+<rect x="52" y="642" width="56" height="22" rx="5" fill="#2563eb" stroke="none" stroke-width="1.5" />
+<text x="80" y="658" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#fff" text-anchor="middle" style="white-space:pre">POST</text>
+<text x="118" y="658" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="600" fill="#1e293b" text-anchor="start" style="white-space:pre">/v2/webhooks/custody</text>
+<text x="118" y="680" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#64748b" text-anchor="start" style="white-space:pre">Broker lock callback</text>
+<rect x="40" y="716" width="438" height="244" rx="8" fill="#fff" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="56" y="744" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1e293b" text-anchor="start" style="white-space:pre">Common rules</text>
+<text x="56" y="774" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">• Auth: OAuth2 bearer (JWT, 15 min)</text>
+<text x="56" y="804" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">• Idempotency-Key required on POST</text>
+<text x="56" y="834" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">• Rate limit: 20 req/s per user</text>
+<text x="56" y="864" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">• Money: integer VND (no decimals)</text>
+<text x="56" y="894" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">• Time: ISO 8601, Asia/Ho_Chi_Minh</text>
+<text x="56" y="924" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">• Errors: RFC 9457 problem+json</text>
+<rect x="520" y="130" width="1256" height="846" rx="10" fill="#0f172a" stroke="none" stroke-width="1.5" />
+<text x="550" y="168.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre"> 1</text>
+<text x="590" y="168.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#64748b" text-anchor="start" style="white-space:pre"># POST /v2/loans — Create loan request</text>
+<text x="550" y="195.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre"> 2</text>
+<text x="590" y="195.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#7dd3fc" text-anchor="start" style="white-space:pre">paths:</text>
+<text x="550" y="223.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre"> 3</text>
+<text x="590" y="223.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#7dd3fc" text-anchor="start" style="white-space:pre">  /v2/loans:</text>
+<text x="550" y="250.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre"> 4</text>
+<text x="590" y="250.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#7dd3fc" text-anchor="start" style="white-space:pre">    post:</text>
+<text x="550" y="278.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre"> 5</text>
+<text x="590" y="278.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#e2e8f0" text-anchor="start" style="white-space:pre">      operationId: createLoan</text>
+<text x="550" y="305.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre"> 6</text>
+<text x="590" y="305.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#e2e8f0" text-anchor="start" style="white-space:pre">      summary: Request a pledge-backed loan  (US-1, FR-001..FR-007)</text>
+<text x="550" y="333.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre"> 7</text>
+<text x="590" y="333.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#7dd3fc" text-anchor="start" style="white-space:pre">      parameters:</text>
+<text x="550" y="360.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre"> 8</text>
+<text x="590" y="360.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#e2e8f0" text-anchor="start" style="white-space:pre">        - name: Idempotency-Key</text>
+<text x="550" y="388.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre"> 9</text>
+<text x="590" y="388.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#e2e8f0" text-anchor="start" style="white-space:pre">          in: header</text>
+<text x="550" y="415.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre">10</text>
+<text x="590" y="415.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#e2e8f0" text-anchor="start" style="white-space:pre">          required: true</text>
+<text x="550" y="443.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre">11</text>
+<text x="590" y="443.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#e2e8f0" text-anchor="start" style="white-space:pre">          schema: { type: string, format: uuid }</text>
+<text x="550" y="470.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre">12</text>
+<text x="590" y="470.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#7dd3fc" text-anchor="start" style="white-space:pre">      requestBody:</text>
+<text x="550" y="498.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre">13</text>
+<text x="590" y="498.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#7dd3fc" text-anchor="start" style="white-space:pre">        content:</text>
+<text x="550" y="525.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre">14</text>
+<text x="590" y="525.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#7dd3fc" text-anchor="start" style="white-space:pre">          application/json:</text>
+<text x="550" y="553.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre">15</text>
+<text x="590" y="553.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#7dd3fc" text-anchor="start" style="white-space:pre">            schema:</text>
+<text x="550" y="580.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre">16</text>
+<text x="590" y="580.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#e2e8f0" text-anchor="start" style="white-space:pre">              type: object</text>
+<text x="550" y="608.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre">17</text>
+<text x="590" y="608.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#e2e8f0" text-anchor="start" style="white-space:pre">              required: [accountId, pledges, amountVnd]</text>
+<text x="550" y="635.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre">18</text>
+<text x="590" y="635.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#7dd3fc" text-anchor="start" style="white-space:pre">              properties:</text>
+<text x="550" y="663.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre">19</text>
+<text x="590" y="663.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#e2e8f0" text-anchor="start" style="white-space:pre">                accountId:  { type: string, format: uuid }</text>
+<text x="550" y="690.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre">20</text>
+<text x="590" y="690.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#e2e8f0" text-anchor="start" style="white-space:pre">                amountVnd:  { type: integer, minimum: 10000000, maximum: 5000000000 }</text>
+<text x="550" y="718.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre">21</text>
+<text x="590" y="718.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#e2e8f0" text-anchor="start" style="white-space:pre">                termDays:   { type: integer, enum: [30, 90, 180] }</text>
+<text x="550" y="745.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre">22</text>
+<text x="590" y="745.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#e2e8f0" text-anchor="start" style="white-space:pre">                pledges:</text>
+<text x="550" y="773.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre">23</text>
+<text x="590" y="773.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#e2e8f0" text-anchor="start" style="white-space:pre">                  type: array</text>
+<text x="550" y="800.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre">24</text>
+<text x="590" y="800.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#e2e8f0" text-anchor="start" style="white-space:pre">                  items: { $ref: "#/components/schemas/PledgeItem" }</text>
+<text x="550" y="828.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre">25</text>
+<text x="590" y="828.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#7dd3fc" text-anchor="start" style="white-space:pre">      responses:</text>
+<text x="550" y="855.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre">26</text>
+<text x="590" y="855.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#86efac" text-anchor="start" style="white-space:pre">        '201':  { description: Loan created,  content: { $ref: Loan } }</text>
+<text x="550" y="883.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre">27</text>
+<text x="590" y="883.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#fca5a5" text-anchor="start" style="white-space:pre">        '409':  { description: DUPLICATE_REQUEST  (same Idempotency-Key) }</text>
+<text x="550" y="910.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre">28</text>
+<text x="590" y="910.5" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#fca5a5" text-anchor="start" style="white-space:pre">        '422':  { description: LIMIT_EXCEEDED | NOT_ELIGIBLE | AFTER_CUTOFF }</text>
+<text x="550" y="938.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#475569" text-anchor="start" style="white-space:pre">29</text>
+<text x="590" y="938.0" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="400" fill="#fca5a5" text-anchor="start" style="white-space:pre">        '503':  { description: CORE_BANKING_UNAVAILABLE  · Retry-After }</text></svg>

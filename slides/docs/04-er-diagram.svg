@@ -1,0 +1,214 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 1000" width="1800" height="1000"><defs>
+<marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#64748b"/></marker>
+<marker id="arrs" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M10 0L0 5L10 10z" fill="#64748b"/></marker>
+<filter id="sh" x="-5%" y="-5%" width="110%" height="120%"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#0f172a" flood-opacity=".10"/></filter>
+</defs><rect x="0" y="0" width="1800" height="1000" rx="0" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" />
+<rect x="0" y="0" width="1800" height="74" rx="0" fill="#1e293b" stroke="none" stroke-width="1.5" />
+<text x="28" y="33" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" font-weight="600" fill="#93c5fd" text-anchor="start" style="white-space:pre">PledgeLend Platform  ·  DB-004</text>
+<text x="28" y="60" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#fff" text-anchor="start" style="white-space:pre">Entity Relationship Diagram — Lending Domain</text>
+<text x="1180" y="32" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10.5" font-weight="600" fill="#94a3b8" text-anchor="start" style="white-space:pre">VERSION</text>
+<text x="1180" y="55" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="600" fill="#fff" text-anchor="start" style="white-space:pre">1.3</text>
+<text x="1330" y="32" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10.5" font-weight="600" fill="#94a3b8" text-anchor="start" style="white-space:pre">STATUS</text>
+<text x="1330" y="55" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="600" fill="#86efac" text-anchor="start" style="white-space:pre">Approved</text>
+<text x="1480" y="32" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10.5" font-weight="600" fill="#94a3b8" text-anchor="start" style="white-space:pre">OWNER</text>
+<text x="1480" y="55" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="600" fill="#fff" text-anchor="start" style="white-space:pre">Architecture Team</text>
+<text x="1630" y="32" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="10.5" font-weight="600" fill="#94a3b8" text-anchor="start" style="white-space:pre">UPDATED</text>
+<text x="1630" y="55" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="600" fill="#fff" text-anchor="start" style="white-space:pre">2026-11-12</text>
+<text x="28" y="102" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#64748b" text-anchor="start" style="white-space:pre" font-style="italic">PostgreSQL 16 · schema: lending · money as NUMERIC(18,0) VND · all tables have created_at / updated_at</text>
+<text x="1776" y="986" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#94a3b8" text-anchor="end" style="white-space:pre">Illustrative example for training — not a real system</text>
+<rect x="40" y="140" width="330" height="175" rx="8" fill="#fff" stroke="#0d9488" stroke-width="1.6" filter="url(#sh)"/>
+<path d="M40 148 a8 8 0 0 1 8 -8 h314 a8 8 0 0 1 8 8 v28 h-330 z" fill="#0d9488"/>
+<text x="54" y="165" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="15" font-weight="700" fill="#fff" text-anchor="start" style="white-space:pre">customer</text>
+<text x="52" y="198" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="700" fill="#ea580c" text-anchor="start" style="white-space:pre">PK</text>
+<text x="86" y="198" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="600" fill="#1e293b" text-anchor="start" style="white-space:pre">customer_id</text>
+<text x="358" y="198" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">uuid</text>
+<line x1="40" y1="207" x2="370" y2="207" stroke="#f1f5f9"/>
+<text x="52" y="225" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="700" fill="#0d9488" text-anchor="start" style="white-space:pre">UK</text>
+<text x="86" y="225" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">national_id</text>
+<text x="358" y="225" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">varchar(12)</text>
+<line x1="40" y1="234" x2="370" y2="234" stroke="#f1f5f9"/>
+<text x="86" y="252" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">full_name</text>
+<text x="358" y="252" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">varchar(120)</text>
+<line x1="40" y1="261" x2="370" y2="261" stroke="#f1f5f9"/>
+<text x="86" y="279" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">kyc_status</text>
+<text x="358" y="279" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">enum</text>
+<line x1="40" y1="288" x2="370" y2="288" stroke="#f1f5f9"/>
+<text x="86" y="306" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">risk_grade</text>
+<text x="358" y="306" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">char(1)</text>
+<rect x="40" y="470" width="330" height="148" rx="8" fill="#fff" stroke="#0d9488" stroke-width="1.6" filter="url(#sh)"/>
+<path d="M40 478 a8 8 0 0 1 8 -8 h314 a8 8 0 0 1 8 8 v28 h-330 z" fill="#0d9488"/>
+<text x="54" y="495" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="15" font-weight="700" fill="#fff" text-anchor="start" style="white-space:pre">securities_account</text>
+<text x="52" y="528" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="700" fill="#ea580c" text-anchor="start" style="white-space:pre">PK</text>
+<text x="86" y="528" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="600" fill="#1e293b" text-anchor="start" style="white-space:pre">account_id</text>
+<text x="358" y="528" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">uuid</text>
+<line x1="40" y1="537" x2="370" y2="537" stroke="#f1f5f9"/>
+<text x="52" y="555" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="700" fill="#7c3aed" text-anchor="start" style="white-space:pre">FK</text>
+<text x="86" y="555" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">customer_id</text>
+<text x="358" y="555" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">uuid</text>
+<line x1="40" y1="564" x2="370" y2="564" stroke="#f1f5f9"/>
+<text x="52" y="582" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="700" fill="#0d9488" text-anchor="start" style="white-space:pre">UK</text>
+<text x="86" y="582" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">broker_account_no</text>
+<text x="358" y="582" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">varchar(20)</text>
+<line x1="40" y1="591" x2="370" y2="591" stroke="#f1f5f9"/>
+<text x="86" y="609" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">broker_code</text>
+<text x="358" y="609" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">varchar(10)</text>
+<rect x="560" y="140" width="330" height="283" rx="8" fill="#fff" stroke="#2563eb" stroke-width="1.6" filter="url(#sh)"/>
+<path d="M560 148 a8 8 0 0 1 8 -8 h314 a8 8 0 0 1 8 8 v28 h-330 z" fill="#2563eb"/>
+<text x="574" y="165" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="15" font-weight="700" fill="#fff" text-anchor="start" style="white-space:pre">loan_contract</text>
+<text x="572" y="198" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="700" fill="#ea580c" text-anchor="start" style="white-space:pre">PK</text>
+<text x="606" y="198" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="600" fill="#1e293b" text-anchor="start" style="white-space:pre">loan_id</text>
+<text x="878" y="198" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">uuid</text>
+<line x1="560" y1="207" x2="890" y2="207" stroke="#f1f5f9"/>
+<text x="572" y="225" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="700" fill="#0d9488" text-anchor="start" style="white-space:pre">UK</text>
+<text x="606" y="225" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">contract_no</text>
+<text x="878" y="225" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">varchar(20)</text>
+<line x1="560" y1="234" x2="890" y2="234" stroke="#f1f5f9"/>
+<text x="572" y="252" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="700" fill="#7c3aed" text-anchor="start" style="white-space:pre">FK</text>
+<text x="606" y="252" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">customer_id</text>
+<text x="878" y="252" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">uuid</text>
+<line x1="560" y1="261" x2="890" y2="261" stroke="#f1f5f9"/>
+<text x="606" y="279" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">principal_vnd</text>
+<text x="878" y="279" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">numeric(18,0)</text>
+<line x1="560" y1="288" x2="890" y2="288" stroke="#f1f5f9"/>
+<text x="606" y="306" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">annual_rate</text>
+<text x="878" y="306" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">numeric(6,4)</text>
+<line x1="560" y1="315" x2="890" y2="315" stroke="#f1f5f9"/>
+<text x="606" y="333" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">day_count</text>
+<text x="878" y="333" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">enum('ACT/365')</text>
+<line x1="560" y1="342" x2="890" y2="342" stroke="#f1f5f9"/>
+<text x="606" y="360" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">value_date</text>
+<text x="878" y="360" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">date</text>
+<line x1="560" y1="369" x2="890" y2="369" stroke="#f1f5f9"/>
+<text x="606" y="387" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">maturity_date</text>
+<text x="878" y="387" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">date</text>
+<line x1="560" y1="396" x2="890" y2="396" stroke="#f1f5f9"/>
+<text x="606" y="414" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">status</text>
+<text x="878" y="414" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">enum</text>
+<rect x="560" y="600" width="330" height="229" rx="8" fill="#fff" stroke="#2563eb" stroke-width="1.6" filter="url(#sh)"/>
+<path d="M560 608 a8 8 0 0 1 8 -8 h314 a8 8 0 0 1 8 8 v28 h-330 z" fill="#2563eb"/>
+<text x="574" y="625" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="15" font-weight="700" fill="#fff" text-anchor="start" style="white-space:pre">pledge</text>
+<text x="572" y="658" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="700" fill="#ea580c" text-anchor="start" style="white-space:pre">PK</text>
+<text x="606" y="658" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="600" fill="#1e293b" text-anchor="start" style="white-space:pre">pledge_id</text>
+<text x="878" y="658" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">uuid</text>
+<line x1="560" y1="667" x2="890" y2="667" stroke="#f1f5f9"/>
+<text x="572" y="685" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="700" fill="#7c3aed" text-anchor="start" style="white-space:pre">FK</text>
+<text x="606" y="685" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">loan_id</text>
+<text x="878" y="685" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">uuid</text>
+<line x1="560" y1="694" x2="890" y2="694" stroke="#f1f5f9"/>
+<text x="572" y="712" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="700" fill="#7c3aed" text-anchor="start" style="white-space:pre">FK</text>
+<text x="606" y="712" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">account_id</text>
+<text x="878" y="712" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">uuid</text>
+<line x1="560" y1="721" x2="890" y2="721" stroke="#f1f5f9"/>
+<text x="572" y="739" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="700" fill="#7c3aed" text-anchor="start" style="white-space:pre">FK</text>
+<text x="606" y="739" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">symbol</text>
+<text x="878" y="739" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">varchar(10)</text>
+<line x1="560" y1="748" x2="890" y2="748" stroke="#f1f5f9"/>
+<text x="606" y="766" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">quantity</text>
+<text x="878" y="766" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">bigint</text>
+<line x1="560" y1="775" x2="890" y2="775" stroke="#f1f5f9"/>
+<text x="606" y="793" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">lock_ref</text>
+<text x="878" y="793" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">varchar(32)</text>
+<line x1="560" y1="802" x2="890" y2="802" stroke="#f1f5f9"/>
+<text x="606" y="820" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">locked_at</text>
+<text x="878" y="820" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">timestamptz</text>
+<rect x="1080" y="640" width="330" height="148" rx="8" fill="#fff" stroke="#ea580c" stroke-width="1.6" filter="url(#sh)"/>
+<path d="M1080 648 a8 8 0 0 1 8 -8 h314 a8 8 0 0 1 8 8 v28 h-330 z" fill="#ea580c"/>
+<text x="1094" y="665" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="15" font-weight="700" fill="#fff" text-anchor="start" style="white-space:pre">security</text>
+<text x="1092" y="698" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="700" fill="#ea580c" text-anchor="start" style="white-space:pre">PK</text>
+<text x="1126" y="698" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="600" fill="#1e293b" text-anchor="start" style="white-space:pre">symbol</text>
+<text x="1398" y="698" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">varchar(10)</text>
+<line x1="1080" y1="707" x2="1410" y2="707" stroke="#f1f5f9"/>
+<text x="1126" y="725" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">exchange</text>
+<text x="1398" y="725" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">enum('HOSE','HNX')</text>
+<line x1="1080" y1="734" x2="1410" y2="734" stroke="#f1f5f9"/>
+<text x="1126" y="752" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">ltv_ratio</text>
+<text x="1398" y="752" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">numeric(5,4)</text>
+<line x1="1080" y1="761" x2="1410" y2="761" stroke="#f1f5f9"/>
+<text x="1126" y="779" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">is_eligible</text>
+<text x="1398" y="779" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">boolean</text>
+<rect x="1080" y="140" width="330" height="202" rx="8" fill="#fff" stroke="#7c3aed" stroke-width="1.6" filter="url(#sh)"/>
+<path d="M1080 148 a8 8 0 0 1 8 -8 h314 a8 8 0 0 1 8 8 v28 h-330 z" fill="#7c3aed"/>
+<text x="1094" y="165" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="15" font-weight="700" fill="#fff" text-anchor="start" style="white-space:pre">interest_accrual</text>
+<text x="1092" y="198" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="700" fill="#ea580c" text-anchor="start" style="white-space:pre">PK</text>
+<text x="1126" y="198" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="600" fill="#1e293b" text-anchor="start" style="white-space:pre">accrual_id</text>
+<text x="1398" y="198" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">bigserial</text>
+<line x1="1080" y1="207" x2="1410" y2="207" stroke="#f1f5f9"/>
+<text x="1092" y="225" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="700" fill="#7c3aed" text-anchor="start" style="white-space:pre">FK</text>
+<text x="1126" y="225" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">loan_id</text>
+<text x="1398" y="225" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">uuid</text>
+<line x1="1080" y1="234" x2="1410" y2="234" stroke="#f1f5f9"/>
+<text x="1092" y="252" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="700" fill="#0d9488" text-anchor="start" style="white-space:pre">UK</text>
+<text x="1126" y="252" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">accrual_date</text>
+<text x="1398" y="252" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">date</text>
+<line x1="1080" y1="261" x2="1410" y2="261" stroke="#f1f5f9"/>
+<text x="1126" y="279" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">balance_eod</text>
+<text x="1398" y="279" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">numeric(18,0)</text>
+<line x1="1080" y1="288" x2="1410" y2="288" stroke="#f1f5f9"/>
+<text x="1126" y="306" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">rate_applied</text>
+<text x="1398" y="306" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">numeric(6,4)</text>
+<line x1="1080" y1="315" x2="1410" y2="315" stroke="#f1f5f9"/>
+<text x="1126" y="333" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">interest_vnd</text>
+<text x="1398" y="333" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">numeric(18,0)</text>
+<rect x="1080" y="400" width="330" height="175" rx="8" fill="#fff" stroke="#7c3aed" stroke-width="1.6" filter="url(#sh)"/>
+<path d="M1080 408 a8 8 0 0 1 8 -8 h314 a8 8 0 0 1 8 8 v28 h-330 z" fill="#7c3aed"/>
+<text x="1094" y="425" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="15" font-weight="700" fill="#fff" text-anchor="start" style="white-space:pre">repayment</text>
+<text x="1092" y="458" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="700" fill="#ea580c" text-anchor="start" style="white-space:pre">PK</text>
+<text x="1126" y="458" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="600" fill="#1e293b" text-anchor="start" style="white-space:pre">repayment_id</text>
+<text x="1398" y="458" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">uuid</text>
+<line x1="1080" y1="467" x2="1410" y2="467" stroke="#f1f5f9"/>
+<text x="1092" y="485" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="700" fill="#7c3aed" text-anchor="start" style="white-space:pre">FK</text>
+<text x="1126" y="485" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">loan_id</text>
+<text x="1398" y="485" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">uuid</text>
+<line x1="1080" y1="494" x2="1410" y2="494" stroke="#f1f5f9"/>
+<text x="1126" y="512" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">amount_vnd</text>
+<text x="1398" y="512" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">numeric(18,0)</text>
+<line x1="1080" y1="521" x2="1410" y2="521" stroke="#f1f5f9"/>
+<text x="1126" y="539" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">interest_part</text>
+<text x="1398" y="539" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">numeric(18,0)</text>
+<line x1="1080" y1="548" x2="1410" y2="548" stroke="#f1f5f9"/>
+<text x="1126" y="566" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#1e293b" text-anchor="start" style="white-space:pre">principal_part</text>
+<text x="1398" y="566" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="12" font-weight="400" fill="#64748b" text-anchor="end" style="white-space:pre">numeric(18,0)</text>
+<path d="M370 200 C465.0 200 465.0 230 560 230" fill="none" stroke="#475569" stroke-width="1.6"/>
+<line x1="378" y1="192" x2="378" y2="208" stroke="#475569" stroke-width="1.6"/>
+<path d="M546 230 L560 222 M546 230 L560 238 M546 230 L560 230" stroke="#475569" stroke-width="1.6" fill="none"/>
+<rect x="413.92" y="197.5" width="102.16000000000001" height="19.5" rx="4" fill="#fff" stroke="none" stroke-width="1.5" />
+<text x="465.0" y="210.0" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="500" fill="#64748b" text-anchor="middle" style="white-space:pre">1 : N  borrows</text>
+<path d="M150 316 V470" fill="none" stroke="#475569" stroke-width="1.6"/>
+<rect x="108.58" y="388.5" width="82.84" height="19.5" rx="4" fill="#fff" stroke="none" stroke-width="1.5" />
+<text x="150" y="401" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="500" fill="#64748b" text-anchor="middle" style="white-space:pre">1 : N  owns</text>
+<path d="M890 230 C985.0 230 985.0 230 1080 230" fill="none" stroke="#475569" stroke-width="1.6"/>
+<line x1="898" y1="222" x2="898" y2="238" stroke="#475569" stroke-width="1.6"/>
+<path d="M1066 230 L1080 222 M1066 230 L1080 238 M1066 230 L1080 230" stroke="#475569" stroke-width="1.6" fill="none"/>
+<rect x="914.6" y="212.5" width="140.8" height="19.5" rx="4" fill="#fff" stroke="none" stroke-width="1.5" />
+<text x="985.0" y="225.0" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="500" fill="#64748b" text-anchor="middle" style="white-space:pre">1 : N  accrues daily</text>
+<path d="M890 300 C985.0 300 985.0 470 1080 470" fill="none" stroke="#475569" stroke-width="1.6"/>
+<line x1="898" y1="292" x2="898" y2="308" stroke="#475569" stroke-width="1.6"/>
+<path d="M1066 470 L1080 462 M1066 470 L1080 478 M1066 470 L1080 470" stroke="#475569" stroke-width="1.6" fill="none"/>
+<rect x="927.48" y="367.5" width="115.04" height="19.5" rx="4" fill="#fff" stroke="none" stroke-width="1.5" />
+<text x="985.0" y="380.0" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="500" fill="#64748b" text-anchor="middle" style="white-space:pre">1 : N  repaid by</text>
+<path d="M720 412 V600" fill="none" stroke="#475569" stroke-width="1.6"/>
+<rect x="659.26" y="508.5" width="121.48" height="19.5" rx="4" fill="#fff" stroke="none" stroke-width="1.5" />
+<text x="720" y="521" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="500" fill="#64748b" text-anchor="middle" style="white-space:pre">1 : N  secured by</text>
+<path d="M370 540 C465.0 540 465.0 700 560 700" fill="none" stroke="#475569" stroke-width="1.6"/>
+<line x1="378" y1="532" x2="378" y2="548" stroke="#475569" stroke-width="1.6"/>
+<path d="M546 700 L560 692 M546 700 L560 708 M546 700 L560 700" stroke="#475569" stroke-width="1.6" fill="none"/>
+<rect x="442.9" y="602.5" width="44.2" height="19.5" rx="4" fill="#fff" stroke="none" stroke-width="1.5" />
+<text x="465.0" y="615.0" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="500" fill="#64748b" text-anchor="middle" style="white-space:pre">1 : N</text>
+<path d="M1080 700 C985.0 700 985.0 720 890 720" fill="none" stroke="#475569" stroke-width="1.6"/>
+<line x1="1088" y1="692" x2="1088" y2="708" stroke="#475569" stroke-width="1.6"/>
+<path d="M904 720 L890 712 M904 720 L890 728 M904 720 L890 720" stroke="#475569" stroke-width="1.6" fill="none"/>
+<rect x="962.9" y="692.5" width="44.2" height="19.5" rx="4" fill="#fff" stroke="none" stroke-width="1.5" />
+<text x="985.0" y="705.0" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="500" fill="#64748b" text-anchor="middle" style="white-space:pre">N : 1</text>
+<rect x="1450" y="140" width="320" height="330" rx="8" fill="#fffbeb" stroke="#fcd34d" stroke-width="1.5" />
+<text x="1466" y="168" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#92400e" text-anchor="start" style="white-space:pre">Constraints</text>
+<text x="1466" y="192" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#92400e" text-anchor="start" style="white-space:pre">• UNIQUE(loan_id, accrual_date)</text>
+<text x="1466" y="216" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#92400e" text-anchor="start" style="white-space:pre">  → accrual runs once per day</text>
+<text x="1466" y="240" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#92400e" text-anchor="start" style="white-space:pre">• CHECK principal_vnd &gt; 0</text>
+<text x="1466" y="264" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#92400e" text-anchor="start" style="white-space:pre">• interest_vnd = FLOOR(balance_eod</text>
+<text x="1466" y="288" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#92400e" text-anchor="start" style="white-space:pre">   × rate_applied / 365)</text>
+<text x="1466" y="312" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#92400e" text-anchor="start" style="white-space:pre">• pledge.lock_ref NOT NULL</text>
+<text x="1466" y="336" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#92400e" text-anchor="start" style="white-space:pre">  when loan.status = ACTIVE</text>
+<text x="1466" y="360" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#92400e" text-anchor="start" style="white-space:pre"></text>
+<text x="1466" y="384" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#92400e" text-anchor="start" style="white-space:pre">Indexes</text>
+<text x="1466" y="408" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#92400e" text-anchor="start" style="white-space:pre">• loan_contract(status, maturity_date)</text>
+<text x="1466" y="432" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="400" fill="#92400e" text-anchor="start" style="white-space:pre">• interest_accrual(accrual_date)</text></svg>
